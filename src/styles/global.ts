@@ -1,0 +1,28 @@
+export const ColorScheme = {
+    BLACK_BOX_SHADOW: 'rgba(0,0,0,0.25)',
+    WHITE_ACTIVE: '#ECECEC',
+    WHITE_FOCUS: '#ECECECD8',
+    WHITE_INACTIVE: '#ECECEC59',
+    GRAY: '#D9D9D9',
+    LIGHTCYAN: '#9FD3C7',
+    GREEN_ACTIVE: '#07841E',
+    GREEN_FOCUS: '#07841ED8',
+    GREEN_INACTIVE: '#07841E59',
+    DARKBLUE_ACTIVE: '#142D4C',
+    DARKBLUE_BORDER: '#142D4CD8',
+    DARKBLUE_INACTIVE: '#142D4C59',
+    BLUE_ACTIVE: '#385170',
+    BLUE_FOCUS: '#385170D8',
+    RED_ACTIVE: '#C70816',
+    RED_FOCUS: '#C70816D8',
+    RED_INACTIVE: '#C7081659',
+    YELLOW_ACTIVE: '#ffec00',
+    YELLOW_FOCUS: 'rgba(255,236,0,0.54)',
+    YELLOW_INACTIVE: '#ffec0059',
+} as const;
+
+export const Fonts = {
+    MAIN_FONT: '',
+    LOGO_FONT: 'kodchasan'
+}
+
