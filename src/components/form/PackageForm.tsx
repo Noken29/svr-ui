@@ -1,15 +1,15 @@
 import React from "react";
 import {DynamicForm, DynamicFormProps, DynamicFormState} from "./DynamicForm";
-import {Package} from "../../domain/Package";
+import {Package, PackageBean} from "../../domain/Package";
 import {Form, FormContainer, FormHeader, FormInput, FormSubmitButton, FormWrapper} from "./form.styled";
 import {SectionItem} from "../../styles/page.styled";
 
-export interface PackageFormProps extends DynamicFormProps<Package> {
+export interface PackageFormProps extends DynamicFormProps<PackageBean> {
 }
 
-export interface PackageFormState extends DynamicFormState<Package> {}
+export interface PackageFormState extends DynamicFormState<PackageBean> {}
 
-export class PackageForm extends DynamicForm<PackageFormProps, PackageFormState, Package> {
+export class PackageForm extends DynamicForm<PackageFormProps, PackageFormState, PackageBean> {
 
     state: Readonly<PackageFormState> = {
         validationErrors: []
@@ -22,13 +22,14 @@ export class PackageForm extends DynamicForm<PackageFormProps, PackageFormState,
 
     handleSubmit(e: any) {
         e.preventDefault();
-        this.props.addingHandler({
-            type: e.target.type.value,
-            weight: e.target.weight.valueAsNumber,
-            volume: e.target.volume.valueAsNumber,
-            cost: e.target.cost.valueAsNumber
-        } as Package)
-        // e.target.reset();
+        this.props.addingHandler(
+            {
+                type: e.target.type.value,
+                weight: e.target.weight.valueAsNumber,
+                volume: e.target.volume.valueAsNumber,
+                cost: e.target.cost.valueAsNumber
+            } as PackageBean
+        )
     }
 
     render() {

@@ -11,9 +11,11 @@ import {
     FormWrapper
 } from "./form.styled";
 import {SectionItem} from "../../styles/page.styled";
+import {Position} from "../map/Map";
 
 interface RoutingSessionCardProps {
-    lastSaved: number
+    lastSaved: number | 'Не збережено'
+    position?: Position
 }
 
 export class RoutingSessionCard extends React.Component<RoutingSessionCardProps> {
@@ -49,7 +51,6 @@ export class RoutingSessionCard extends React.Component<RoutingSessionCardProps>
                             />
                         </FormContainer>
                         <FormContainer direction={'row'}>
-                            <FormButton disabled={true}>Обрати На Мапі</FormButton>
                             <FormSubmitButton type={'submit'}>Ок</FormSubmitButton>
                         </FormContainer>
                         <FormContainer direction={'column'}>

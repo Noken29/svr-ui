@@ -1,9 +1,10 @@
 import React from "react";
 import VehiclePage from "../../pages/VehiclePage";
-import {Vehicle} from "../../domain/Vehicle";
+import {Vehicle, VehicleBean} from "../../domain/Vehicle";
 import {APIConfiguration, APIPath} from "../../configuration/APIConfiguration";
 import axios from 'axios';
-import {FuelType} from "../../domain/FuelType";
+import {FuelType, FuelTypeBean} from "../../domain/FuelType";
+import {Tabulated} from "../../domain/Tabulated";
 
 interface VehiclePageControllerState {
     fuelTypes: FuelType[],
@@ -25,18 +26,18 @@ export class VehiclePageController extends React.Component {
     }
 
     async handleSave(vs: Vehicle[]) {
-        const response = await axios.post<Vehicle[]>(APIPath + APIConfiguration.saveVehicles.path, vs)
+        const vehicles = await axios.post<VehicleBean[]>(APIPath + APIConfiguration.saveVehicles.path, vs)
         this.setState({
-            vehicles: response.data
+            vehicles: vehicles.data.map((v) => new Vehicle(v))
         })
     }
 
     async componentDidMount() {
-        const fuelTypes = await axios.get(APIPath + APIConfiguration.fetchFuelTypes.path)
-        const vehicles = await axios.get(APIPath + APIConfiguration.fetchVehicles.path)
+        const fuelTypes = await axios.get<FuelTypeBean[]>(APIPath + APIConfiguration.fetchFuelTypes.path)
+        const vehicles = await axios.get<VehicleBean[]>(APIPath + APIConfiguration.fetchVehicles.path)
         this.setState({
-            fuelTypes: fuelTypes.data,
-            vehicles: vehicles.data,
+            fuelTypes: fuelTypes.data.map((v) => new FuelType(v)),
+            vehicles: vehicles.data.map((v) => new Vehicle(v)),
             isLoaded: true
         })
     }

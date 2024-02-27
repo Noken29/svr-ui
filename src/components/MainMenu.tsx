@@ -1,21 +1,21 @@
 import React from "react";
-import {SectionContainer} from "../styles/page.styled";
-import {Button, ControlButton} from "../styles/controls.styled";
 import {Link, Outlet} from "react-router-dom";
+import {MenuContainer, MenuButton, MenuButtonWhite, MenuHeader} from "./nav.styled";
 
 export const MainMenu: React.FC = () => {
     return (
-        <SectionContainer direction={'row'}>
+        <MenuContainer>
+            <MenuHeader>RouteMapper</MenuHeader>
             <Link to={'/routing/new'}>
-                <ControlButton>Маршрутизація</ControlButton>
+                <MenuButton>Маршрутизація</MenuButton>
             </Link>
             <Link to={'/routing-sessions'}>
-                <ControlButton>Маршрутизація</ControlButton>
+                <MenuButtonWhite>Минулі Сеанси</MenuButtonWhite>
             </Link>
             <Link to={'/vehicles'}>
-                <ControlButton>Транспортні Засоби</ControlButton>
+                <MenuButtonWhite>Транспортні Засоби</MenuButtonWhite>
             </Link>
             <Outlet/>
-        </SectionContainer>
+        </MenuContainer>
     )
 }

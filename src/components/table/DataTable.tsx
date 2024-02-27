@@ -20,31 +20,44 @@ import React, {useState} from "react";
 import {ColorScheme} from "../../styles/global";
 import {ControlButton, Input, RemoveButton} from "../../styles/controls.styled";
 import {Control, SectionItem} from "../../styles/page.styled";
+import {Tabulated} from "../../domain/Tabulated";
 
 interface SelectionProps<TData> {
     multipleSelection: boolean
+    canUnSelect: boolean
     selectionHandler: (item: TData) => void
-    selectedItems?: TData[]
 }
 
-interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[]
+interface DataTableProps<TData extends Tabulated> {
+    columns: ColumnDef<TData>[]
     data: TData[]
+    searchInputPlaceholder: string
     itemsPerTable: number
+    selectedData?: TData[]
     selectionProps?: SelectionProps<TData>
     removingHandler?: (item: TData) => void
 }
 
-export function DataTable<TData, TValue>({
-                                             columns,
-                                             data,
-                                             itemsPerTable,
-                                             selectionProps,
-                                             removingHandler,
-                                         }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends Tabulated> ({
+    columns,
+    data,
+    itemsPerTable,
+    searchInputPlaceholder,
+    selectedData,
+    selectionProps,
+    removingHandler,
+}: DataTableProps<TData>) {
 
     const [globalFilter, setGlobalFilter] = React.useState('')
-    const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>(() => {
+        if (!selectedData)
+            return {}
+        const initialSelectedRows: RowSelectionState = {}
+        selectedData.forEach((item, index) => {
+            initialSelectedRows[item.key()] = true
+        })
+        return initialSelectedRows
+    })
 
     const table = useReactTable({
         data,
@@ -55,6 +68,7 @@ export function DataTable<TData, TValue>({
         onRowSelectionChange: setRowSelection,
         enableRowSelection: selectionProps !== undefined,
         enableMultiRowSelection: selectionProps !== undefined ? selectionProps.multipleSelection : false,
+        getRowId: item => item.key(),
         state: {
             globalFilter,
             rowSelection,
@@ -62,9 +76,8 @@ export function DataTable<TData, TValue>({
         initialState: {
             pagination: {
                 pageSize: itemsPerTable
-            },
-            rowSelection: {}
-        },
+            }
+        }
     })
 
 
@@ -88,7 +101,7 @@ export function DataTable<TData, TValue>({
                 <Input
                     value={globalFilter ?? ''}
                     onChange={e => setGlobalFilter(e.target.value)}
-                    placeholder={'Фільтр Тип/Вартість/...'}
+                    placeholder={searchInputPlaceholder}
                 />
                 <ControlButton>Імпорт з CSV</ControlButton>
             </Control>
@@ -117,32 +130,37 @@ export function DataTable<TData, TValue>({
                     </TableHeader>
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row, index) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                    backgroundColor={_calculateRowBackgroundColor(index, row.getIsSelected())}
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id} onClick={() => {
-                                            row.toggleSelected()
-                                            if (selectionProps) {
-                                                selectionProps.selectionHandler(row.original)
-                                            }
-                                        }}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                    {removingHandler !== undefined && (
-                                        <TableControlCell>
-                                            <RemoveButton onClick={() => {
-                                                setRowSelection({})
-                                                removingHandler(row.original)
-                                            }}/>
-                                        </TableControlCell>
-                                    )}
-                                </TableRow>
-                            ))
+                            table.getRowModel().rows.map((row, index) => {
+                                return (
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={row.getIsSelected()}
+                                        backgroundColor={_calculateRowBackgroundColor(index, row.getIsSelected())}
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id} onClick={() => {
+                                                if (selectionProps) {
+                                                    if (row.getIsSelected() && selectionProps.canUnSelect)
+                                                        row.toggleSelected(false)
+                                                    else
+                                                        row.toggleSelected(true)
+                                                    selectionProps.selectionHandler(row.original)
+                                                }
+                                            }}>
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </TableCell>
+                                        ))}
+                                        {removingHandler !== undefined && (
+                                            <TableControlCell>
+                                                <RemoveButton onClick={() => {
+                                                    setRowSelection({})
+                                                    removingHandler(row.original)
+                                                }}/>
+                                            </TableControlCell>
+                                        )}
+                                    </TableRow>
+                                )
+                            })
                         ) : (
                             <TableRow
                                 backgroundColor={ColorScheme.WHITE_ACTIVE}

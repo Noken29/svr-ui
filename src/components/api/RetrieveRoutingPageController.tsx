@@ -7,10 +7,10 @@ import {
 } from "../../styles/page.styled";
 import {ControlButton} from "../../styles/controls.styled";
 import {DataTable} from "../table/DataTable";
-import React, {useState} from "react";
+import React from "react";
 import {Link, Navigate} from "react-router-dom";
 import {APIConfiguration, APIPath, ClientConfiguration} from "../../configuration/APIConfiguration";
-import {RoutingSessionInfo, routingSessionInfoColumns} from "../../domain/RoutingSession";
+import {RoutingSessionInfo, RoutingSessionInfoBean, routingSessionInfoColumns} from "../../domain/RoutingSession";
 import axios from "axios";
 
 interface RetrieveRoutingPageControllerState {
@@ -33,10 +33,9 @@ export class RetrieveRoutingPageController extends React.Component {
     }
 
     async componentDidMount() {
-        const response = await axios.get<RoutingSessionInfo[]>(APIPath + APIConfiguration.fetchRoutingSessionInfos.path)
-        console.log(response.data)
+        const response = await axios.get<RoutingSessionInfoBean[]>(APIPath + APIConfiguration.fetchRoutingSessionInfos.path)
         this.setState({
-            routingSessionInfos: response.data,
+            routingSessionInfos: response.data.map((rsi) => new RoutingSessionInfo(rsi)),
             isLoaded: true
         })
     }
@@ -72,9 +71,11 @@ export class RetrieveRoutingPageController extends React.Component {
                             <DataTable
                                 columns={routingSessionInfoColumns}
                                 data={this.state.routingSessionInfos}
+                                searchInputPlaceholder={'Фільтр Номер/Назва/...'}
                                 itemsPerTable={15}
                                 selectionProps={{
                                     multipleSelection: false,
+                                    canUnSelect: false,
                                     selectionHandler: this.handleSelectRoutingSession
                                 }}
                             />

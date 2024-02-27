@@ -1,17 +1,17 @@
 import {DynamicForm, DynamicFormProps, DynamicFormState} from "./DynamicForm";
 import React from "react";
-import {Vehicle} from "../../domain/Vehicle";
+import {Vehicle, VehicleBean} from "../../domain/Vehicle";
 import {FuelType} from "../../domain/FuelType";
 import {Form, FormContainer, FormHeader, FormInput, FormSubmitButton, FormWrapper} from "./form.styled";
 import {SectionItem} from "../../styles/page.styled";
 
-export interface VehicleFormProps extends DynamicFormProps<Vehicle> {
+export interface VehicleFormProps extends DynamicFormProps<VehicleBean> {
     selectedFuelType?: FuelType
 }
 
-export interface VehicleFormState extends DynamicFormState<Vehicle> {}
+export interface VehicleFormState extends DynamicFormState<VehicleBean> {}
 
-export class VehicleForm extends DynamicForm<VehicleFormProps, VehicleFormState, Vehicle> {
+export class VehicleForm extends DynamicForm<VehicleFormProps, VehicleFormState, VehicleBean> {
 
     state: Readonly<VehicleFormState> = {
         validationErrors: []
@@ -24,14 +24,19 @@ export class VehicleForm extends DynamicForm<VehicleFormProps, VehicleFormState,
 
     handleSubmit(e: any) {
         e.preventDefault();
-        this.props.addingHandler({
-            description: e.target.description.value,
-            carryingCapacity: e.target.carryingCapacity.valueAsNumber,
-            volume: e.target.volume.valueAsNumber,
-            fuelType: this.props.selectedFuelType,
-            fuelConsumption: e.target.fuelConsumption.valueAsNumber,
-        } as Vehicle)
-        e.target.reset();
+        if (!this.props.selectedFuelType) {
+            alert('Select Fuel Type first!')
+            return
+        }
+        this.props.addingHandler(
+            {
+                description: e.target.description.value,
+                carryingCapacity: e.target.carryingCapacity.valueAsNumber,
+                volume: e.target.volume.valueAsNumber,
+                fuelType: this.props.selectedFuelType,
+                fuelConsumption: e.target.fuelConsumption.valueAsNumber
+            } as VehicleBean
+        )
     }
 
     render() {

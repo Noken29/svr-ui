@@ -1,6 +1,6 @@
 import React from "react";
 import {DynamicForm, DynamicFormProps, DynamicFormState} from "./DynamicForm";
-import {Customer} from "../../domain/Customer";
+import {CustomerBean} from "../../domain/Customer";
 import {SectionItem} from "../../styles/page.styled";
 import {
     Form,
@@ -12,13 +12,17 @@ import {
     FormTextArea,
     FormWrapper
 } from "./form.styled";
+import {Position} from "../map/Map";
 
-export interface CustomerFormProps extends DynamicFormProps<Customer> {
+export interface CustomerFormProps extends DynamicFormProps<CustomerBean> {
+    position?: Position
+    onChangeHandler: () => void
 }
 
-export interface CustomerFormState extends DynamicFormState<Customer> {}
+export interface CustomerFormState extends DynamicFormState<CustomerBean> {
+}
 
-export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormState, Customer> {
+export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormState, CustomerBean> {
 
     state: Readonly<CustomerFormState> = {
         validationErrors: []
@@ -31,22 +35,32 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
 
     handleSubmit(e: any) {
         e.preventDefault();
-        this.props.addingHandler({
-            id: null,
-            name: e.target.name.value,
-            phoneNumber: e.target.phoneNumber.value,
-            addressLines: e.target.addressLines.value,
-            specialRequirements: e.target.specialRequirements.value,
-            packages: []
-        } as Customer)
-        // e.target.reset();
+        if (!this.props.position) {
+            alert('Select position first!')
+            return
+        }
+        this.props.addingHandler(
+            {
+                name: e.target.name.value,
+                phoneNumber: e.target.phoneNumber.value,
+                addressLines: e.target.addressLines.value,
+                specialRequirements: e.target.specialRequirements.value,
+                packages: [],
+                latitude: this.props.position.lat,
+                longitude: this.props.position.lng,
+            } as CustomerBean
+        )
+    }
+
+    getAddressLines() {
+        return this.props.position?.addressLines ?? ''
     }
 
     render() {
         return (
             <SectionItem>
                 <FormWrapper>
-                    <Form onSubmit={this.handleSubmit}>
+                    <Form onSubmit={this.handleSubmit} onChange={this.props.onChangeHandler}>
                         <FormHeader>Додати Клієнта</FormHeader>
                         <FormContainer direction={'column'}>
                             <FormInput
@@ -65,6 +79,7 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                                 id={'c-address-lines'}
                                 type={'text'}
                                 name={'addressLines'}
+                                value={this.getAddressLines()}
                                 placeholder={'Адреса'}
                             />
                             <FormTextArea
@@ -72,7 +87,6 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                                 name={'specialRequirements'}
                                 placeholder={'Вимоги'}
                             />
-                            <FormButton disabled={true}>Обрати На Мапі</FormButton>
                             <FormSubmitButton type={'submit'}>Додати</FormSubmitButton>
                         </FormContainer>
                     </Form>

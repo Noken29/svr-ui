@@ -1,6 +1,8 @@
 import React from "react";
-import {Vehicle} from "../../domain/Vehicle";
-import {RoutingSession} from "../../domain/RoutingSession";
+import {Vehicle, VehicleBean} from "../../domain/Vehicle";
+import {
+    RoutingSession, RoutingSessionPersistBean, RoutingSessionViewBean
+} from "../../domain/RoutingSession";
 import axios from 'axios';
 import {
     APIConfiguration,
@@ -8,14 +10,14 @@ import {
     ClientConfiguration
 } from "../../configuration/APIConfiguration";
 import RoutingPage from "../../pages/RoutingPage";
-import {Navigate, redirect, useParams} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 
 interface RoutingPageControllerProps {
     routingSessionId?: number
 }
 
 interface RoutingPageControllerState {
-    routingSession: RoutingSession,
+    routingSession?: RoutingSession,
     vehicles: Vehicle[],
     isLoaded: boolean,
     initialSave: boolean
@@ -25,7 +27,6 @@ interface RoutingPageControllerState {
 class RoutingPageController extends React.Component<RoutingPageControllerProps, RoutingPageControllerState> {
 
     state: Readonly<RoutingPageControllerState> = {
-        routingSession: new RoutingSession(),
         vehicles: [],
         isLoaded: false,
         initialSave: !this.props.routingSessionId
@@ -36,34 +37,35 @@ class RoutingPageController extends React.Component<RoutingPageControllerProps, 
         this.handleSave = this.handleSave.bind(this)
     }
 
-    async handleSave(rs: RoutingSession) {
-        const response = await axios.post<RoutingSession>(APIPath + APIConfiguration.saveRoutingSession.path(this.props.routingSessionId), rs)
+    async handleSave(rsb: RoutingSessionPersistBean) {
+        const response = await axios.post(APIPath + APIConfiguration.saveRoutingSession.path(this.props.routingSessionId), rsb)
         this.setState({
-            routingSession: response.data
+            routingSession: new RoutingSession(response.data)
         })
     }
 
     async componentDidMount() {
-        const vehicles = await axios.get<Vehicle[]>(APIPath + APIConfiguration.fetchVehicles.path)
+        const vehicles = await axios.get<VehicleBean[]>(APIPath + APIConfiguration.fetchVehicles.path)
         this.setState({
-            vehicles: vehicles.data,
+            vehicles: vehicles.data.map((v) => new Vehicle(v)),
         })
         if (this.props.routingSessionId) {
-            const routingSession = await axios.get<RoutingSession>(APIPath + APIConfiguration.fetchRoutingSession.path(this.props.routingSessionId))
+            const response = await axios.get<RoutingSessionViewBean>(APIPath + APIConfiguration.fetchRoutingSession.path(this.props.routingSessionId))
             this.setState({
-                routingSession: routingSession.data
+                routingSession: new RoutingSession(response.data)
             })
         }
         this.setState({
             isLoaded: true
         })
+        console.log(this.state.routingSession)
     }
 
     render() {
         if (!this.state.isLoaded)
             return <h1>Loading...</h1>
 
-        if (this.state.routingSession.id && this.state.initialSave)
+        if (this.state.routingSession?.id && this.state.initialSave)
             return <Navigate to={ClientConfiguration.existedRoutingPage.path.replace(':routingSessionId', this.state.routingSession.id.toString())}/>
 
         return (

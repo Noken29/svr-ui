@@ -1,16 +1,16 @@
-import {MainContainer, MainContainerBody, PageHeader} from "../styles/page.styled";
+import {PageFooter, PageHeader} from "../styles/page.styled";
 import React from "react";
 import {MainMenu} from "../components/MainMenu";
+import {MainMenuContainer} from "../components/nav.styled";
 
 export const MainMenuPage: React.FC = () => {
     return (
         <>
             <PageHeader>RouteMapper</PageHeader>
-            <MainContainer>
-                <MainContainerBody>
-                    <MainMenu/>
-                </MainContainerBody>
-            </MainContainer>
+            <MainMenuContainer>
+                <MainMenu/>
+            </MainMenuContainer>
+            <PageFooter>RouteMapper</PageFooter>
         </>
     )
 }

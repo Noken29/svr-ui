@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Vehicle, vehicleColumns} from "../domain/Vehicle";
+import {Vehicle, VehicleBean, vehicleColumns} from "../domain/Vehicle";
 import {FuelType, fuelTypeColumns} from "../domain/FuelType";
 import {
     ContainerItem,
@@ -23,11 +23,11 @@ interface VehiclePageProps {
 
 const VehiclePage: React.FC<VehiclePageProps> = (props: VehiclePageProps) => {
     const [fuelTypes, ] = useState<FuelType[]>(props.fuelTypes)
-    const [selectedFuelType, setSelectedFuelType] = useState<FuelType>()
+    const [selectedFuelType, setSelectedFuelType] = useState<FuelType>(props.fuelTypes[0])
     const [vehicles, setVehicles] = useState<Vehicle[]>(props.vehicles)
 
-    const handleSelectFuelType = (fuelType?: FuelType) => {setSelectedFuelType(fuelType !== undefined ? fuelType : undefined)};
-    const handleAddVehicle = (vehicle: Vehicle) => {setVehicles((prevState) => [...prevState, vehicle])};
+    const handleSelectFuelType = (fuelType: FuelType) => {setSelectedFuelType(fuelType)};
+    const handleAddVehicle = (v: VehicleBean) => {setVehicles((prevState) => [...prevState, new Vehicle(v)])};
     const handleRemoveVehicle = (vehicle: Vehicle) => {setVehicles(vehicles.filter(e => e !== vehicle))}
 
     return (
@@ -52,20 +52,24 @@ const VehiclePage: React.FC<VehiclePageProps> = (props: VehiclePageProps) => {
                             addingHandler={handleAddVehicle}
                             selectedFuelType={selectedFuelType}
                         />
-                        <DataTable
+                        <DataTable<FuelType>
                             columns={fuelTypeColumns}
                             data={fuelTypes}
+                            searchInputPlaceholder={'Фільтр Тип/Вартість/...'}
+                            selectedData={[fuelTypes[0]]}
                             itemsPerTable={3}
                             selectionProps={{
                                 multipleSelection: false,
+                                canUnSelect: false,
                                 selectionHandler: handleSelectFuelType
                             }}
                         />
                     </SectionContainer>
                     <SectionContainer direction={'column'}>
-                        <DataTable
+                        <DataTable<Vehicle>
                             columns={vehicleColumns}
                             data={vehicles}
+                            searchInputPlaceholder={'Фільтр Марка/Модель/...'}
                             itemsPerTable={5}
                             removingHandler={handleRemoveVehicle}
                         />

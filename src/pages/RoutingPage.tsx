@@ -1,8 +1,8 @@
-import React, {useCallback, useEffect, useState} from "react";
-import {Customer, customerColumns} from "../domain/Customer";
-import {Package, packageColumns} from "../domain/Package";
+import React, {useState} from "react";
+import {Customer, CustomerBean, customerColumns} from "../domain/Customer";
+import {Package, PackageBean, packageColumns} from "../domain/Package";
 import {
-    ContainerItem, Control,
+    ContainerItem,
     MainContainer,
     MainContainerBody,
     MainContainerHeader, PageFooter,
@@ -14,29 +14,33 @@ import {DataTable} from "../components/table/DataTable";
 import {Vehicle, vehicleColumns} from "../domain/Vehicle";
 import CustomerForm from "../components/form/CustomerForm";
 import PackageForm from "../components/form/PackageForm";
-import {RoutingSession} from "../domain/RoutingSession";
+import {RoutingSession, RoutingSessionPersistBean} from "../domain/RoutingSession";
 import {ClientConfiguration} from "../configuration/APIConfiguration";
 import {Link} from "react-router-dom";
 import {RoutingSessionCard} from "../components/form/RoutingSessionCard";
-import {InputMap} from "../components/map/Map";
+import {InputMap, Position} from "../components/map/Map";
 
 interface RoutingPageProps {
-    routingSession: RoutingSession,
+    routingSession?: RoutingSession,
     vehicles: Vehicle[]
-    savingHandler: (rs: RoutingSession) => void
+    savingHandler: (rs: RoutingSessionPersistBean) => void
 }
 
 const RoutingPage: React.FC<RoutingPageProps> = (props) => {
-    const [customers, setCustomers] = useState<Customer[]>(props.routingSession.customers)
+    const [customers, setCustomers] = useState<Customer[]>(props.routingSession?.customers ?? [])
     const [vehicles, setVehicles] = useState<Vehicle[]>(props.vehicles)
 
     const [selectedCustomer, setSelectedCustomer] = useState<Customer>()
     const [packages, setPackages] = useState<Package[]>([])
 
-    const [selectedVehicles, setSelectedVehicles] = useState<Vehicle[]>(props.routingSession.vehicles)
+    const [selectedVehicles, setSelectedVehicles] = useState<Vehicle[]>(
+        props.routingSession ? props.vehicles.filter(v => v.id && props.routingSession?.vehicleIds.has(v.id)) : []
+    )
 
-    const handleAddCustomer = (c: Customer) => {
-        setCustomers((prevState) => [...prevState, c])
+    const [position, setPosition] = useState<Position>()
+
+    const handleAddCustomer = (c: CustomerBean) => {
+        setCustomers((prevState) => [...prevState, new Customer(c)])
     }
     const handleRemoveCustomer = (c: Customer) => {
         setSelectedCustomer(undefined)
@@ -51,9 +55,9 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
             setPackages([])
         }
     }
-    const handleAddPackage = (p: Package) => {
+    const handleAddPackage = (p: PackageBean) => {
         if (selectedCustomer !== undefined) {
-            selectedCustomer.packages = [p, ...selectedCustomer.packages]
+            selectedCustomer.packages = [new Package(p), ...selectedCustomer.packages]
             setPackages(selectedCustomer.packages)
         }
     }
@@ -69,6 +73,23 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
         else
             setSelectedVehicles(selectedVehicles.filter(e => e !== v))
     }
+    const handleChangeCustomerForm = () => {
+        setSelectedCustomer(undefined)
+        setPosition(undefined)
+    }
+
+    const handleChangeCoordinates = (pos: Position) => {
+        setPosition(pos)
+    }
+
+    const buildRoutingSessionBean = () => {
+        return {
+            description: '',
+            lastSaved: Date.now(),
+            customers: customers.map((c) => c.asBean()),
+            vehicleIds: selectedVehicles.map((v) => v.id)
+        } as RoutingSessionPersistBean
+    }
 
     return (
         <>
@@ -79,11 +100,8 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                 <MainContainerHeader>
                     <ToolbarContainer>
                         <ContainerItem justifyContent={'flex-start'}>
-                            <ControlButton
-                                onClick={() => props.savingHandler(
-                                    new RoutingSession().setAll('', Date.now(), selectedVehicles, customers)
-                                )}
-                            >Зберегти
+                            <ControlButton onClick={() => props.savingHandler(buildRoutingSessionBean())}>
+                                Зберегти
                             </ControlButton>
                         </ContainerItem>
                         <ContainerItem justifyContent={'flex-end'}>
@@ -94,21 +112,34 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                 </MainContainerHeader>
                 <MainContainerBody>
                     <SectionContainer direction={'column'}>
-                        <RoutingSessionCard lastSaved={props.routingSession.lastSaved}/>
+                        <RoutingSessionCard
+                            lastSaved={props.routingSession?.lastSaved ?? 'Не збережено'}
+                            position={position}
+                        />
                     </SectionContainer>
                     <SectionContainer direction={'column'}>
                         <CustomerForm
                             addingHandler={handleAddCustomer}
+                            onChangeHandler={handleChangeCustomerForm}
+                            position={position}
                         />
-                        <InputMap/>
+                        <InputMap
+                            customers={customers}
+                            selectedCustomer={selectedCustomer}
+                            processCoordinatesHandler={handleChangeCoordinates}
+                            selectionHandler={handleSelectCustomer}
+                        />
                     </SectionContainer>
                     <SectionContainer direction={'row'}>
-                        <DataTable
+                        <DataTable<Customer>
                             columns={customerColumns}
                             data={customers}
+                            selectedData={selectedCustomer ? [selectedCustomer] : []}
+                            searchInputPlaceholder={'Фільтр Ім\'я/Номер Телефону/...'}
                             itemsPerTable={5}
                             selectionProps={{
                                 multipleSelection: false,
+                                canUnSelect: true,
                                 selectionHandler: handleSelectCustomer
                             }}
                             removingHandler={handleRemoveCustomer}
@@ -124,23 +155,26 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                     }
                     {selectedCustomer !== undefined && (
                         <SectionContainer direction={'row'}>
-                            <DataTable
+                            <DataTable<Package>
                                 columns={packageColumns}
                                 data={selectedCustomer?.packages}
+                                searchInputPlaceholder={'Фільтр Тип/Вага/Об\'єм/...'}
                                 itemsPerTable={5}
                                 removingHandler={handleRemovePackage}
                             />
                         </SectionContainer>
                     )}
                     <SectionContainer direction={'row'}>
-                        <DataTable
+                        <DataTable<Vehicle>
                             columns={vehicleColumns}
                             data={vehicles}
+                            selectedData={selectedVehicles}
+                            searchInputPlaceholder={'Фільтр Марка/Модель/...'}
                             itemsPerTable={10}
                             selectionProps={{
                                 multipleSelection: true,
-                                selectionHandler: handleSelectVehicle,
-                                selectedItems: selectedVehicles
+                                canUnSelect: true,
+                                selectionHandler: handleSelectVehicle
                             }}
                         />
                     </SectionContainer>
