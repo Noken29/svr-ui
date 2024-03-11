@@ -1,6 +1,6 @@
 import React from "react";
 import {DynamicForm, DynamicFormProps, DynamicFormState} from "./DynamicForm";
-import {Package, PackageBean} from "../../domain/Package";
+import {PackageBean} from "../../domain/Package";
 import {Form, FormContainer, FormHeader, FormInput, FormSubmitButton, FormWrapper} from "./form.styled";
 import {SectionItem} from "../../styles/page.styled";
 

@@ -17,4 +17,13 @@ export class Depot {
         this.latitude = bean.latitude
         this.longitude = bean.longitude
     }
+
+    asBean() {
+        return {
+            id: this.id,
+            addressLines: this.addressLines,
+            latitude: this.latitude,
+            longitude: this.longitude
+        } as DepotBean
+    }
 }

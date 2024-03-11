@@ -4,7 +4,6 @@ import {CustomerBean} from "../../domain/Customer";
 import {SectionItem} from "../../styles/page.styled";
 import {
     Form,
-    FormButton,
     FormContainer,
     FormHeader,
     FormInput,
@@ -34,7 +33,7 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
     }
 
     handleSubmit(e: any) {
-        e.preventDefault();
+        e.preventDefault()
         if (!this.props.position) {
             alert('Select position first!')
             return

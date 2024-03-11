@@ -4,7 +4,6 @@ import {Vehicle, VehicleBean} from "../../domain/Vehicle";
 import {APIConfiguration, APIPath} from "../../configuration/APIConfiguration";
 import axios from 'axios';
 import {FuelType, FuelTypeBean} from "../../domain/FuelType";
-import {Tabulated} from "../../domain/Tabulated";
 
 interface VehiclePageControllerState {
     fuelTypes: FuelType[],

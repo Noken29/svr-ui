@@ -3,7 +3,10 @@ import React, {useState} from "react";
 import {GoogleMap, MarkerF} from '@react-google-maps/api';
 import {geocode, OutputFormat, RequestType} from "react-geocode";
 import {Customer} from "../../domain/Customer";
-import {GoogleMapScript} from "./GoogleMapScript";
+import {GOOGLE_MAPS_API_KEY, GoogleMapScript} from "../../configuration/GoogleMapScript";
+import {Depot} from "../../domain/Depot";
+import {ColorScheme} from "../../styles/global";
+import Point = google.maps.Point;
 
 export type Position = {
     lat: number,
@@ -12,6 +15,7 @@ export type Position = {
 }
 
 interface InputMapProps {
+    depot?: Depot
     customers: Customer[]
     selectedCustomer?: Customer
     processCoordinatesHandler: (pos: Position) => void
@@ -30,7 +34,7 @@ export const InputMap = (props: InputMapProps) => {
     const handleMapClick = async (e: any) => {
         let pos: Position = {lat: e.latLng.lat(), lng: e.latLng.lng(), addressLines: ''}
         await geocode(RequestType.LATLNG, pos.lat.toString() + ',' + pos.lng.toString(), {
-            key: '',
+            key: GOOGLE_MAPS_API_KEY,
             outputFormat: OutputFormat.JSON,
             language: 'uk',
             location_type: 'ROOFTOP'
@@ -57,18 +61,61 @@ export const InputMap = (props: InputMapProps) => {
                 onClick={handleMapClick}
                 onLoad={loadMarkers}
             >
+                {displayMarkers && props.depot &&
+                        <MarkerF
+                            label={{
+                                text: 'Депо',
+                                color: ColorScheme.GREEN_ACTIVE,
+                                fontWeight: 'bold',
+                            }}
+                            position={{lat: props.depot.latitude, lng: props.depot.longitude}}
+                            icon={{
+                                path: 'M12 0C7.24 0 3 4.24 3 9c0 6.18 9 15 9 15s9-8.82 9-15c0-4.76-4.24-9-9-9zm0 13c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z',
+                                fillColor: ColorScheme.GREEN_ACTIVE,
+                                fillOpacity: 1,
+                                strokeColor: ColorScheme.DARKBLUE_ACTIVE,
+                                strokeWeight: 2,
+                                scale: 1.2,
+                                anchor: new Point(13, 20),
+                                labelOrigin: new Point(13.5, -7)
+                            }}
+                        />
+                }
                 {displayMarkers && props.customers.map((c, index) => {
                     if (c.latitude && c.longitude)
                         return (
                             <MarkerF
-                                label={c.name}
+                                label={{
+                                    text: c.name,
+                                    color: ColorScheme.BLUE_ACTIVE,
+                                    fontWeight: 'bold'
+                                }}
                                 position={{lat: c.latitude, lng: c.longitude}}
+                                icon={{
+                                    path: 'M12 0C7.24 0 3 4.24 3 9c0 6.18 9 15 9 15s9-8.82 9-15c0-4.76-4.24-9-9-9zm0 13c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z',
+                                    fillColor: ColorScheme.BLUE_ACTIVE,
+                                    fillOpacity: 1,
+                                    strokeColor: ColorScheme.DARKBLUE_ACTIVE,
+                                    strokeWeight: 2,
+                                    scale: 1.2,
+                                    anchor: new Point(13, 20),
+                                    labelOrigin: new Point(13.5, -7)
+                                }}
                             />
                         )
                 })}
                 {
                     displayMarkers && selectedPosition && <MarkerF
                         position={{lat: selectedPosition.lat, lng: selectedPosition.lng}}
+                        icon={{
+                            path: 'M12 0C7.24 0 3 4.24 3 9c0 6.18 9 15 9 15s9-8.82 9-15c0-4.76-4.24-9-9-9zm0 13c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z',
+                            fillColor: ColorScheme.WHITE_ACTIVE,
+                            fillOpacity: 1,
+                            strokeColor: ColorScheme.DARKBLUE_ACTIVE,
+                            strokeWeight: 2,
+                            scale: 1,
+                            anchor: new Point(13, 20)
+                        }}
                     />
                 }
             </GoogleMap>}

@@ -1,6 +1,6 @@
 import {DynamicForm, DynamicFormProps, DynamicFormState} from "./DynamicForm";
 import React from "react";
-import {Vehicle, VehicleBean} from "../../domain/Vehicle";
+import {VehicleBean} from "../../domain/Vehicle";
 import {FuelType} from "../../domain/FuelType";
 import {Form, FormContainer, FormHeader, FormInput, FormSubmitButton, FormWrapper} from "./form.styled";
 import {SectionItem} from "../../styles/page.styled";

@@ -1,33 +1,54 @@
 import React from "react";
-import DynamicForm from "./DynamicForm";
 import {
     Form,
-    FormButton,
     FormContainer,
     FormHeader,
     FormInput,
     FormSubmitButton,
-    FormTextArea,
     FormWrapper
 } from "./form.styled";
 import {SectionItem} from "../../styles/page.styled";
 import {Position} from "../map/Map";
+import {DepotBean} from "../../domain/Depot";
+import DynamicForm, {DynamicFormProps, DynamicFormState} from "./DynamicForm";
+import {RoutingSessionMainInfoBean} from "../../domain/RoutingSession";
 
-interface RoutingSessionCardProps {
+interface RoutingSessionMainInfoFormProps extends DynamicFormProps<RoutingSessionMainInfoBean> {
     lastSaved: number | 'Не збережено'
     position?: Position
 }
 
-export class RoutingSessionCard extends React.Component<RoutingSessionCardProps> {
+interface RoutingSessionMainInfoFormState extends DynamicFormState<RoutingSessionMainInfoBean> {
+}
 
+export class RoutingSessionMainInfoForm extends DynamicForm<RoutingSessionMainInfoFormProps, RoutingSessionMainInfoFormState, RoutingSessionMainInfoBean> {
 
-    constructor(props: RoutingSessionCardProps) {
-        super(props);
+    constructor(props: RoutingSessionMainInfoFormProps, context: any) {
+        super(props, context);
+        this.handleSubmit = this.handleSubmit.bind(this)
     }
 
 
     handleSubmit(e: any) {
+        e.preventDefault()
+        if (!this.props.position) {
+            alert('Select position first!')
+            return
+        }
+        this.props.addingHandler(
+            {
+                depot: {
+                    addressLines: e.target.addressLines.value,
+                    latitude: this.props.position.lat,
+                    longitude: this.props.position.lng
+                } as DepotBean,
+                description: e.target.description.value
+            } as RoutingSessionMainInfoBean
+        )
+    }
 
+    getAddressLines() {
+        return this.props.position?.addressLines ?? ''
     }
 
     render() {
@@ -41,6 +62,7 @@ export class RoutingSessionCard extends React.Component<RoutingSessionCardProps>
                                 id={'d-address-lines'}
                                 type={'text'}
                                 name={'addressLines'}
+                                value={this.getAddressLines()}
                                 placeholder={'Адреса Депо'}
                             />
                             <FormInput

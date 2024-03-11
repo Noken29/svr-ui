@@ -1,7 +1,7 @@
 import React from "react";
 import {Vehicle, VehicleBean} from "../../domain/Vehicle";
 import {
-    RoutingSession, RoutingSessionPersistBean, RoutingSessionViewBean
+    RoutingSession, RoutingSessionBean
 } from "../../domain/RoutingSession";
 import axios from 'axios';
 import {
@@ -37,7 +37,7 @@ class RoutingPageController extends React.Component<RoutingPageControllerProps, 
         this.handleSave = this.handleSave.bind(this)
     }
 
-    async handleSave(rsb: RoutingSessionPersistBean) {
+    async handleSave(rsb: RoutingSessionBean) {
         const response = await axios.post(APIPath + APIConfiguration.saveRoutingSession.path(this.props.routingSessionId), rsb)
         this.setState({
             routingSession: new RoutingSession(response.data)
@@ -50,7 +50,7 @@ class RoutingPageController extends React.Component<RoutingPageControllerProps, 
             vehicles: vehicles.data.map((v) => new Vehicle(v)),
         })
         if (this.props.routingSessionId) {
-            const response = await axios.get<RoutingSessionViewBean>(APIPath + APIConfiguration.fetchRoutingSession.path(this.props.routingSessionId))
+            const response = await axios.get<RoutingSessionBean>(APIPath + APIConfiguration.fetchRoutingSession.path(this.props.routingSessionId))
             this.setState({
                 routingSession: new RoutingSession(response.data)
             })

@@ -1,21 +1,19 @@
 import {Customer, CustomerBean} from "./Customer";
-import {Vehicle, VehicleBean} from "./Vehicle";
 import {ColumnDef} from "@tanstack/react-table";
 import {Tabulated} from "./Tabulated";
 import uuid from 'react-uuid';
 import {Depot, DepotBean} from "./Depot";
 
-export type RoutingSessionPersistBean = {
+export type RoutingSessionMainInfoBean = {
     description: string
-    lastSaved: number
-    vehicleIds: number[]
-    customers: CustomerBean[]
+    depot: DepotBean
 }
 
-export type RoutingSessionViewBean = {
-    id: number
+export type RoutingSessionBean = {
+    id?: number
     description: string
     lastSaved: number
+    depot: DepotBean
     vehicleIds: number[]
     customers: CustomerBean[]
 }
@@ -24,13 +22,15 @@ export class RoutingSession {
     id?: number
     description: string
     lastSaved: number
+    depot: Depot
     vehicleIds: Set<number>
     customers: Customer[]
 
-    constructor(bean: RoutingSessionViewBean) {
+    constructor(bean: RoutingSessionBean) {
         this.id = bean.id
         this.description = bean.description
         this.lastSaved = bean.lastSaved
+        this.depot = new Depot(bean.depot)
         this.vehicleIds = new Set(bean.vehicleIds)
         this.customers = bean.customers.map((c) => new Customer(c))
     }

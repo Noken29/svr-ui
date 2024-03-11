@@ -14,19 +14,23 @@ import {DataTable} from "../components/table/DataTable";
 import {Vehicle, vehicleColumns} from "../domain/Vehicle";
 import CustomerForm from "../components/form/CustomerForm";
 import PackageForm from "../components/form/PackageForm";
-import {RoutingSession, RoutingSessionPersistBean} from "../domain/RoutingSession";
+import {RoutingSession, RoutingSessionBean, RoutingSessionMainInfoBean} from "../domain/RoutingSession";
 import {ClientConfiguration} from "../configuration/APIConfiguration";
 import {Link} from "react-router-dom";
-import {RoutingSessionCard} from "../components/form/RoutingSessionCard";
+import {RoutingSessionMainInfoForm} from "../components/form/RoutingSessionMainInfoForm";
 import {InputMap, Position} from "../components/map/Map";
+import {Depot} from "../domain/Depot";
 
 interface RoutingPageProps {
     routingSession?: RoutingSession,
     vehicles: Vehicle[]
-    savingHandler: (rs: RoutingSessionPersistBean) => void
+    savingHandler: (rs: RoutingSessionBean) => void
 }
 
 const RoutingPage: React.FC<RoutingPageProps> = (props) => {
+    const [depot, setDepot] = useState(props.routingSession?.depot)
+    const [description, setDescription] = useState(props.routingSession?.description)
+
     const [customers, setCustomers] = useState<Customer[]>(props.routingSession?.customers ?? [])
     const [vehicles, setVehicles] = useState<Vehicle[]>(props.vehicles)
 
@@ -38,6 +42,11 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
     )
 
     const [position, setPosition] = useState<Position>()
+
+    const handleAddMainInfo = (r: RoutingSessionMainInfoBean) => {
+        setDepot(new Depot(r.depot))
+        setDescription(r.description)
+    }
 
     const handleAddCustomer = (c: CustomerBean) => {
         setCustomers((prevState) => [...prevState, new Customer(c)])
@@ -75,7 +84,6 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
     }
     const handleChangeCustomerForm = () => {
         setSelectedCustomer(undefined)
-        setPosition(undefined)
     }
 
     const handleChangeCoordinates = (pos: Position) => {
@@ -84,11 +92,12 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
 
     const buildRoutingSessionBean = () => {
         return {
-            description: '',
+            description: description,
             lastSaved: Date.now(),
+            depot: depot?.asBean(),
             customers: customers.map((c) => c.asBean()),
             vehicleIds: selectedVehicles.map((v) => v.id)
-        } as RoutingSessionPersistBean
+        } as RoutingSessionBean
     }
 
     return (
@@ -112,7 +121,8 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                 </MainContainerHeader>
                 <MainContainerBody>
                     <SectionContainer direction={'column'}>
-                        <RoutingSessionCard
+                        <RoutingSessionMainInfoForm
+                            addingHandler={handleAddMainInfo}
                             lastSaved={props.routingSession?.lastSaved ?? 'Не збережено'}
                             position={position}
                         />
@@ -124,6 +134,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                             position={position}
                         />
                         <InputMap
+                            depot={depot}
                             customers={customers}
                             selectedCustomer={selectedCustomer}
                             processCoordinatesHandler={handleChangeCoordinates}
