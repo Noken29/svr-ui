@@ -6,7 +6,6 @@ import {Customer} from "../../domain/Customer";
 import {GOOGLE_MAPS_API_KEY, GoogleMapScript} from "../../configuration/GoogleMapScript";
 import {Depot} from "../../domain/Depot";
 import {ColorScheme} from "../../styles/global";
-import Point = google.maps.Point;
 
 export type Position = {
     lat: number,
@@ -52,9 +51,15 @@ export const InputMap = (props: InputMapProps) => {
         setDisplayMarkers(true)
     }
 
+    const isLoaded = GoogleMapScript()
+
+    if (!isLoaded) {
+        return <h1>Loading...</h1>
+    }
+
     return (
         <>
-            {GoogleMapScript() && <GoogleMap
+            <GoogleMap
                 mapContainerStyle={{ height: '100%', width: '100%' }}
                 zoom={10}
                 center={KyivCoordinates}
@@ -76,8 +81,8 @@ export const InputMap = (props: InputMapProps) => {
                                 strokeColor: ColorScheme.DARKBLUE_ACTIVE,
                                 strokeWeight: 2,
                                 scale: 1.2,
-                                anchor: new Point(13, 20),
-                                labelOrigin: new Point(13.5, -7)
+                                anchor: new window.google.maps.Point(13, 20),
+                                labelOrigin: new google.maps.Point(13.5, -7)
                             }}
                         />
                 }
@@ -98,8 +103,8 @@ export const InputMap = (props: InputMapProps) => {
                                     strokeColor: ColorScheme.DARKBLUE_ACTIVE,
                                     strokeWeight: 2,
                                     scale: 1.2,
-                                    anchor: new Point(13, 20),
-                                    labelOrigin: new Point(13.5, -7)
+                                    anchor: new window.google.maps.Point(13, 20),
+                                    labelOrigin: new window.google.maps.Point(13.5, -7)
                                 }}
                             />
                         )
@@ -114,11 +119,11 @@ export const InputMap = (props: InputMapProps) => {
                             strokeColor: ColorScheme.DARKBLUE_ACTIVE,
                             strokeWeight: 2,
                             scale: 1,
-                            anchor: new Point(13, 20)
+                            anchor: new window.google.maps.Point(13, 20)
                         }}
                     />
                 }
-            </GoogleMap>}
+            </GoogleMap>
         </>
     )
 }

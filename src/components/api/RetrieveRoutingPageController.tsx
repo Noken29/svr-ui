@@ -1,17 +1,9 @@
-import {
-    ContainerItem,
-    MainContainer, MainContainerBody,
-    MainContainerHeader, PageFooter,
-    PageHeader, SectionContainer,
-    ToolbarContainer
-} from "../../styles/page.styled";
-import {ControlButton} from "../../styles/controls.styled";
-import {DataTable} from "../table/DataTable";
 import React from "react";
-import {Link, Navigate} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 import {APIConfiguration, APIPath, ClientConfiguration} from "../../configuration/APIConfiguration";
 import {RoutingSessionInfo, RoutingSessionInfoBean, routingSessionInfoColumns} from "../../domain/RoutingSession";
 import axios from "axios";
+import {RetrieveRoutingPage} from "../../pages/RetrieveRoutingPage";
 
 interface RetrieveRoutingPageControllerState {
     routingSessionInfos: RoutingSessionInfo[],
@@ -51,39 +43,6 @@ export class RetrieveRoutingPageController extends React.Component {
             return <h1>Loading...</h1>
         if (this.state.selectedRoutingSessionId)
             return <Navigate to={ClientConfiguration.existedRoutingPage.path.replace(':routingSessionId', this.state.selectedRoutingSessionId.toString())}/>
-        return (
-            <>
-                <Link to={ClientConfiguration.mainMenuPage.path}>
-                    <PageHeader>RouteMapper</PageHeader>
-                </Link>
-                <MainContainer>
-                    <MainContainerHeader>
-                        <ToolbarContainer>
-                            <ContainerItem justifyContent={'flex-start'}>
-                                <Link to={ClientConfiguration.newRoutingPage.path}>
-                                    <ControlButton>Маршрутизація</ControlButton>
-                                </Link>
-                            </ContainerItem>
-                        </ToolbarContainer>
-                    </MainContainerHeader>
-                    <MainContainerBody>
-                        <SectionContainer direction={'row'}>
-                            <DataTable
-                                columns={routingSessionInfoColumns}
-                                data={this.state.routingSessionInfos}
-                                searchInputPlaceholder={'Фільтр Номер/Назва/...'}
-                                itemsPerTable={15}
-                                selectionProps={{
-                                    multipleSelection: false,
-                                    canUnSelect: false,
-                                    selectionHandler: this.handleSelectRoutingSession
-                                }}
-                            />
-                        </SectionContainer>
-                    </MainContainerBody>
-                </MainContainer>
-                <PageFooter>RouteMapper</PageFooter>
-            </>
-        );
+        return <RetrieveRoutingPage routingSessionInfos={this.state.routingSessionInfos} selectRoutingSessionHandler={this.handleSelectRoutingSession}/>
     }
 }

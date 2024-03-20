@@ -46,14 +46,10 @@ export class VehiclePageController extends React.Component {
         if (!this.state.isLoaded)
             return <h1>Loading...</h1>
 
-        return (
-            <>
-                <VehiclePage
-                    fuelTypes={this.state.fuelTypes}
-                    vehicles={this.state.vehicles}
-                    savingHandler={this.handleSave}
-                />
-            </>
-        )
+        return <VehiclePage
+            fuelTypes={this.state.fuelTypes}
+            vehicles={this.state.vehicles}
+            savingHandler={this.handleSave}
+        />
     }
 }

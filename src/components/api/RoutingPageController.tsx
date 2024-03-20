@@ -68,15 +68,11 @@ class RoutingPageController extends React.Component<RoutingPageControllerProps, 
         if (this.state.routingSession?.id && this.state.initialSave)
             return <Navigate to={ClientConfiguration.existedRoutingPage.path.replace(':routingSessionId', this.state.routingSession.id.toString())}/>
 
-        return (
-            <>
-                <RoutingPage
-                    vehicles={this.state.vehicles}
-                    routingSession={this.state.routingSession}
-                    savingHandler={this.handleSave}
-                />
-            </>
-        );
+        return <RoutingPage
+            vehicles={this.state.vehicles}
+            routingSession={this.state.routingSession}
+            savingHandler={this.handleSave}
+        />
     }
 }
 
