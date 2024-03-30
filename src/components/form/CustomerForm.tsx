@@ -11,7 +11,7 @@ import {
     FormTextArea,
     FormWrapper
 } from "./form.styled";
-import {Position} from "../map/Map";
+import {Position} from "../map/Utils";
 
 export interface CustomerFormProps extends DynamicFormProps<CustomerBean> {
     position?: Position

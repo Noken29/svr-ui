@@ -1,3 +1,5 @@
+import {Position} from "../components/map/Utils";
+
 export type DepotBean = {
     id?: number,
     addressLines: string,
@@ -25,5 +27,12 @@ export class Depot {
             latitude: this.latitude,
             longitude: this.longitude
         } as DepotBean
+    }
+
+    asPosition() {
+        return {
+            lat: this.latitude,
+            lng: this.longitude
+        } as Position
     }
 }

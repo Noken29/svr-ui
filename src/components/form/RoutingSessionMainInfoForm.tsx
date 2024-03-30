@@ -8,10 +8,10 @@ import {
     FormWrapper
 } from "./form.styled";
 import {SectionItem} from "../../styles/page.styled";
-import {Position} from "../map/Map";
 import {DepotBean} from "../../domain/Depot";
 import DynamicForm, {DynamicFormProps, DynamicFormState} from "./DynamicForm";
 import {RoutingSessionMainInfoBean} from "../../domain/RoutingSession";
+import {Position} from "../map/Utils";
 
 interface RoutingSessionMainInfoFormProps extends DynamicFormProps<RoutingSessionMainInfoBean> {
     lastSaved: number | 'Не збережено'

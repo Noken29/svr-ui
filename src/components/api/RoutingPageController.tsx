@@ -20,27 +20,37 @@ interface RoutingPageControllerState {
     routingSession?: RoutingSession,
     vehicles: Vehicle[],
     isLoaded: boolean,
-    initialSave: boolean
+    initialSave: boolean,
+    haveSolutions: boolean
 }
-
 
 class RoutingPageController extends React.Component<RoutingPageControllerProps, RoutingPageControllerState> {
 
     state: Readonly<RoutingPageControllerState> = {
         vehicles: [],
         isLoaded: false,
-        initialSave: !this.props.routingSessionId
+        initialSave: !this.props.routingSessionId,
+        haveSolutions: false
     }
 
     constructor(props: any, context: any) {
         super(props, context);
         this.handleSave = this.handleSave.bind(this)
+        this.handleMakeRoutes = this.handleMakeRoutes.bind(this)
     }
 
     async handleSave(rsb: RoutingSessionBean) {
         const response = await axios.post(APIPath + APIConfiguration.saveRoutingSession.path(this.props.routingSessionId), rsb)
         this.setState({
             routingSession: new RoutingSession(response.data)
+        })
+        return true
+    }
+
+    async handleMakeRoutes() {
+        const response = await axios.get(APIPath + APIConfiguration.makeRoutes.path(this.props.routingSessionId))
+        this.setState({
+            haveSolutions: this.state.haveSolutions || response.data
         })
     }
 
@@ -52,13 +62,13 @@ class RoutingPageController extends React.Component<RoutingPageControllerProps, 
         if (this.props.routingSessionId) {
             const response = await axios.get<RoutingSessionBean>(APIPath + APIConfiguration.fetchRoutingSession.path(this.props.routingSessionId))
             this.setState({
-                routingSession: new RoutingSession(response.data)
+                routingSession: new RoutingSession(response.data),
+                haveSolutions: response.data.haveSolutions
             })
         }
         this.setState({
             isLoaded: true
         })
-        console.log(this.state.routingSession)
     }
 
     render() {
@@ -72,6 +82,8 @@ class RoutingPageController extends React.Component<RoutingPageControllerProps, 
             vehicles={this.state.vehicles}
             routingSession={this.state.routingSession}
             savingHandler={this.handleSave}
+            haveSolutions={this.state.haveSolutions}
+            makeRoutesHandler={this.handleMakeRoutes}
         />
     }
 }

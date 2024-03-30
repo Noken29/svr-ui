@@ -4,6 +4,7 @@ import {ExistedRoutingSessionPage, NewRoutingSessionPage} from "../components/ap
 import {VehiclePageController} from "../components/api/VehiclePageController";
 import {createBrowserRouter} from "react-router-dom";
 import {RetrieveRoutingPageController} from "../components/api/RetrieveRoutingPageController";
+import {RoutesPageController, RoutesPageForRoutingSession} from "../components/api/RoutesPageController";
 
 export const ClientPath = 'http://localhost:3000'
 export const APIPath = 'http://localhost:8080'
@@ -25,6 +26,10 @@ export const ClientConfiguration = {
         path: '/routing-session/:routingSessionId',
         element: <ExistedRoutingSessionPage/>
     },
+    routesPage: {
+        path: '/routing-session/routes/:routingSessionId',
+        element: <RoutesPageForRoutingSession/>
+    },
     vehiclesPage: {
         path: '/vehicles',
         element: <VehiclePageController/>
@@ -36,6 +41,7 @@ export const ClientRouter = createBrowserRouter([
     ClientConfiguration.newRoutingPage,
     ClientConfiguration.retrieveRoutingPage,
     ClientConfiguration.existedRoutingPage,
+    ClientConfiguration.routesPage,
     ClientConfiguration.vehiclesPage,
 ])
 
@@ -58,5 +64,11 @@ export const APIConfiguration = {
     },
     saveRoutingSession: {
         path: (id?: number) => '/routing-session' + (id ? '/' + id : '')
+    },
+    makeRoutes: {
+        path: (id?: number) => '/routing-session/routes' + (id ? '/' + id : '')
+    },
+    getRoutes: {
+        path: (id?: number) => '/routing-session/routes/all' + (id ? '/' + id : '')
     }
 }

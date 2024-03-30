@@ -2,6 +2,7 @@ import {Package, PackageBean} from "./Package";
 import {ColumnDef} from "@tanstack/react-table";
 import {Tabulated} from "./Tabulated";
 import uuid from 'react-uuid';
+import {Position} from "../components/map/Utils";
 
 export type CustomerBean = {
     id?: number
@@ -48,6 +49,13 @@ export class Customer implements Tabulated {
             latitude: this.latitude,
             longitude: this.longitude
         } as CustomerBean
+    }
+
+    asPosition() {
+        return {
+            lat: this.latitude,
+            lng: this.longitude
+        } as Position
     }
 
     key(): string {

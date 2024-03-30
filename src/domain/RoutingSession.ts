@@ -16,6 +16,7 @@ export type RoutingSessionBean = {
     depot: DepotBean
     vehicleIds: number[]
     customers: CustomerBean[]
+    haveSolutions: boolean
 }
 
 export class RoutingSession {

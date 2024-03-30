@@ -103,7 +103,6 @@ export function DataTable<TData extends Tabulated> ({
                     onChange={e => setGlobalFilter(e.target.value)}
                     placeholder={searchInputPlaceholder}
                 />
-                <ControlButton>Імпорт з CSV</ControlButton>
             </Control>
             <TableWrapper>
                 <Table>
