@@ -11,7 +11,7 @@ import {
 } from "../styles/page.styled";
 import {ControlButton} from "../styles/controls.styled";
 import {DataTable} from "../components/table/DataTable";
-import {Solution, solutionColumns} from "../domain/Solution";
+import {routeColumns, Solution, solutionColumns} from "../domain/Solution";
 import {RoutesMap} from "../components/map/RoutesMap";
 
 interface RoutesPageProps {
@@ -57,7 +57,15 @@ export const RoutesPage: React.FC<RoutesPageProps> = (props) => {
                                 selectionHandler: selectSolutionHandler,
                             }}
                         />
-                        {selectedSolution && props.solutions.map(s => <RoutesMap display={s === selectedSolution} data={s.data}/>)}
+                        {selectedSolution && props.solutions.map(s => <RoutesMap display={s === selectedSolution} solution={s}/>)}
+                        {selectedSolution && (
+                            <DataTable
+                                columns={routeColumns}
+                                data={selectedSolution?.routes}
+                                searchInputPlaceholder={'Введіть Номер/ТЗ/...'}
+                                itemsPerTable={5}
+                            />)
+                        }
                     </SectionContainer>
                 </MainContainerBody>
             </MainContainer>

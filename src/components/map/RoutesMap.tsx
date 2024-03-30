@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import {KyivPosition, mapRouteCustomers, mapRoutePositions, Position} from "./Utils";
+import {KyivPosition, Position} from "./Utils";
 import {CustomerMarker, DepotMarker, getRouteColorSchemeBasedOnIndex} from "./Marker";
-import {SolutionData} from "../../domain/Solution";
+import {Solution} from "../../domain/Solution";
 import {DirectionsRenderer, DirectionsService, GoogleMap} from "@react-google-maps/api";
 import {Customer} from "../../domain/Customer";
 import {Depot} from "../../domain/Depot";
@@ -9,7 +9,7 @@ import {Depot} from "../../domain/Depot";
 interface RoutesMapProps {
     display: boolean
     routeIndex?: number
-    data: SolutionData
+    solution: Solution
 }
 
 export const RoutesMap = (props: RoutesMapProps) => {
@@ -31,14 +31,13 @@ export const RoutesMap = (props: RoutesMapProps) => {
                 center={KyivPosition}
                 onLoad={loadRoutes}
             >
-                {displayRoutes && props.data.depot && <DepotMarker depot={props.data.depot}/>}
+                {displayRoutes && props.solution.depot && <DepotMarker depot={props.solution.depot}/>}
                 {displayRoutes && (
                     <RouteDirection
                         displayCustomers={true}
                         routeIndex={props.routeIndex}
-                        depot={props.data.depot}
-                        customers={props.data.customers}
-                        customerIds={props.data.routes[props.routeIndex].customersIds}
+                        depot={props.solution.depot}
+                        customers={props.solution.routes[props.routeIndex].customers}
                     />
                 )}
             </GoogleMap>
@@ -55,18 +54,18 @@ export const RoutesMap = (props: RoutesMapProps) => {
             center={KyivPosition}
             onLoad={loadRoutes}
         >
-            {displayRoutes && props.data.depot && <DepotMarker depot={props.data.depot}/>}
-            {displayRoutes && props.data.customers.map(c => {
+            {displayRoutes && props.solution.depot && <DepotMarker depot={props.solution.depot}/>}
+            {displayRoutes && props.solution.customers.map(c => {
                 if (c.latitude && c.longitude)
                     return <CustomerMarker customer={c}/>
             })}
-            {displayRoutes && props.data.routes.map((r, index) => {
+            {displayRoutes && props.solution.routes.map((r, index) => {
                 return <RouteDirection
+                    key={r.key()}
                     displayCustomers={false}
                     routeIndex={index}
-                    depot={props.data.depot}
-                    customers={props.data.customers}
-                    customerIds={r.customersIds}
+                    depot={props.solution.depot}
+                    customers={props.solution.routes[index].customers}
                 />
             })}
         </GoogleMap>
@@ -124,35 +123,28 @@ interface RouteDirectionProps {
     routeIndex: number
     depot: Depot
     customers: Customer[]
-    customerIds: number[]
 }
 
 export const RouteDirection: React.FC<RouteDirectionProps> = (props) => {
-    const [customers, ] = useState(
-        mapRouteCustomers(
-            props.customers,
-            props.customerIds
-        )
-    )
-    const [positions, ] = useState(
-        mapRoutePositions(
-            props.depot,
-            props.customers,
-            props.customerIds
-        )
-    )
 
     return (
         <>
-            {props.displayCustomers && customers.map(c => {
+            {props.displayCustomers && props.customers.map(c => {
                 if (c.latitude && c.longitude)
                     return <CustomerMarker customer={c} routeIndex={props.routeIndex}/>
             })}
-            {positions.map((p, index) => {
-                if (index + 1 < positions.length) {
-                    return <SingleDirection routeIndex={props.routeIndex} from={positions[index]} to={positions[index + 1]}/>
+            <SingleDirection routeIndex={props.routeIndex} from={props.depot.asPosition()} to={props.customers[0].asPosition()}/>
+            {props.customers.map((c, index) => {
+                if (index + 1 < props.customers.length) {
+                    return <SingleDirection
+                        key={c.id}
+                        routeIndex={props.routeIndex}
+                        from={props.customers[index].asPosition()}
+                        to={props.customers[index + 1].asPosition()}
+                    />
                 }
             })}
+            <SingleDirection routeIndex={props.routeIndex} from={props.customers[props.customers.length - 1].asPosition()} to={props.depot.asPosition()}/>
         </>
     )
 }

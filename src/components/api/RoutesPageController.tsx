@@ -23,7 +23,6 @@ export class RoutesPageController extends React.Component<RoutesPageControllerPr
 
     async componentDidMount() {
         const solutions = await axios.get<SolutionBean[]>(APIPath + APIConfiguration.getRoutes.path(this.props.routingSessionId))
-        let s = solutions.data.map(s => new Solution(s))
         this.setState({
             solutions: solutions.data.map(s => new Solution(s))
         })

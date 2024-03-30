@@ -4,7 +4,6 @@ import {ColorScheme, Fonts} from "./global";
 export const PageHeader = styled.header`
   background-color: ${ColorScheme.DARKBLUE_ACTIVE};
   padding: 10px;
-  width: 100%;
   color: ${ColorScheme.WHITE_ACTIVE};
   
   font-weight: bold;
@@ -83,7 +82,6 @@ export const PageFooter = styled.footer`
   background-color: ${ColorScheme.DARKBLUE_ACTIVE};
   align-self: flex-end;
   padding: 10px;
-  width: 100%;
   color: ${ColorScheme.WHITE_ACTIVE};
   
   font-weight: bold;
