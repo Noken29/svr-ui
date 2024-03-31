@@ -60,7 +60,6 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
             <SectionItem>
                 <FormWrapper>
                     <Form onSubmit={this.handleSubmit} onChange={this.props.onChangeHandler}>
-                        <FormHeader>Додати Клієнта</FormHeader>
                         <FormContainer direction={'column'}>
                             <FormInput
                                 id={'c-name'}

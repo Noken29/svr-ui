@@ -2,7 +2,6 @@ import React from "react";
 import {
     Form,
     FormContainer,
-    FormHeader,
     FormInput,
     FormSubmitButton,
     FormWrapper
@@ -14,7 +13,6 @@ import {RoutingSessionMainInfoBean} from "../../domain/RoutingSession";
 import {Position} from "../map/Utils";
 
 interface RoutingSessionMainInfoFormProps extends DynamicFormProps<RoutingSessionMainInfoBean> {
-    lastSaved: number | 'Не збережено'
     position?: Position
 }
 
@@ -42,7 +40,7 @@ export class RoutingSessionMainInfoForm extends DynamicForm<RoutingSessionMainIn
                     latitude: this.props.position.lat,
                     longitude: this.props.position.lng
                 } as DepotBean,
-                description: e.target.description.value
+                description: e.target.description.value,
             } as RoutingSessionMainInfoBean
         )
     }
@@ -56,7 +54,6 @@ export class RoutingSessionMainInfoForm extends DynamicForm<RoutingSessionMainIn
             <SectionItem>
                 <FormWrapper>
                     <Form onSubmit={this.handleSubmit}>
-                        <FormHeader>Сеанс Маршрутизації</FormHeader>
                         <FormContainer direction={'row'}>
                             <FormInput
                                 id={'d-address-lines'}
@@ -74,9 +71,6 @@ export class RoutingSessionMainInfoForm extends DynamicForm<RoutingSessionMainIn
                         </FormContainer>
                         <FormContainer direction={'row'}>
                             <FormSubmitButton type={'submit'}>Ок</FormSubmitButton>
-                        </FormContainer>
-                        <FormContainer direction={'column'}>
-                            <FormHeader>Збережено: {this.props.lastSaved}</FormHeader>
                         </FormContainer>
                     </Form>
                 </FormWrapper>

@@ -3,6 +3,7 @@ import {ColumnDef} from "@tanstack/react-table";
 import {Tabulated} from "./Tabulated";
 import uuid from 'react-uuid';
 import {Depot, DepotBean} from "./Depot";
+import {formatDate} from "../utils/FormatUtils";
 
 export type RoutingSessionMainInfoBean = {
     description: string
@@ -80,5 +81,6 @@ export const routingSessionInfoColumns: ColumnDef<RoutingSessionInfo>[] = [
     {
         accessorKey: 'lastSaved',
         header: 'Дата Модифікації',
+        cell: ({ row }) => formatDate(row.original.lastSaved.toString())
     }
 ]

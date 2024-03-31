@@ -37,7 +37,6 @@ export class PackageForm extends DynamicForm<PackageFormProps, PackageFormState,
             <SectionItem>
                 <FormWrapper>
                     <Form onSubmit={this.handleSubmit}>
-                        <FormHeader>Додати Вантаж</FormHeader>
                         <FormContainer direction={'row'}>
                             <FormInput
                                 id={'p-type'}

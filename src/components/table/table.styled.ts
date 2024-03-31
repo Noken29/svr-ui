@@ -41,7 +41,18 @@ export const TableHeaderRow = styled.tr``
 
 export const TableRow = styled("tr")<{backgroundColor?: string, color?: string}>`
   background-color: ${props => props.backgroundColor ? props.backgroundColor : ColorScheme.GRAY};
-  color: ${props => props.color ? props.color : ColorScheme.BLUE_ACTIVE}
+  color: ${props => props.color ? props.color : ColorScheme.BLUE_ACTIVE};
+  
+  ${props => props.backgroundColor === ColorScheme.LIGHTCYAN && `
+    &:hover {
+      background-color: ${ColorScheme.LIGHTCYAN_FOCUS};
+    }
+  `}
+  ${props => props.backgroundColor !== ColorScheme.LIGHTCYAN && `
+    &:hover {
+      background-color: ${ColorScheme.GRAY_FOCUS};
+    }
+  `}
 `
 
 export const TableCell = styled.td`

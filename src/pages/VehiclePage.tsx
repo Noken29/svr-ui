@@ -6,7 +6,7 @@ import {
     MainContainer,
     MainContainerBody,
     MainContainerHeader, PageFooter,
-    PageHeader, SectionContainer,
+    PageHeader, SectionContainer, SectionHeader, SectionItem,
     ToolbarContainer
 } from "../styles/page.styled";
 import {ControlButton} from "../styles/controls.styled";
@@ -42,37 +42,48 @@ const VehiclePage: React.FC<VehiclePageProps> = (props: VehiclePageProps) => {
                             <ControlButton onClick={() => props.savingHandler(vehicles)}>Зберегти</ControlButton>
                         </ContainerItem>
                         <ContainerItem justifyContent={'flex-end'}>
-                            <ControlButton>Маршрутизація</ControlButton>
+                            <Link to={ClientConfiguration.newRoutingPage.path}>
+                                <ControlButton>Маршрутизація</ControlButton>
+                            </Link>
                         </ContainerItem>
                     </ToolbarContainer>
                 </MainContainerHeader>
                 <MainContainerBody>
-                    <SectionContainer direction={'column'}>
-                        <VehicleForm
-                            addingHandler={handleAddVehicle}
-                            selectedFuelType={selectedFuelType}
-                        />
-                        <DataTable<FuelType>
-                            columns={fuelTypeColumns}
-                            data={fuelTypes}
-                            searchInputPlaceholder={'Фільтр Тип/Вартість/...'}
-                            selectedData={[fuelTypes[0]]}
-                            itemsPerTable={3}
-                            selectionProps={{
-                                multipleSelection: false,
-                                canUnSelect: false,
-                                selectionHandler: handleSelectFuelType
-                            }}
-                        />
+                    <SectionContainer direction={'row'}>
+                        <SectionItem>
+                            <SectionHeader>Види Пального</SectionHeader>
+                            <DataTable<FuelType>
+                                columns={fuelTypeColumns}
+                                data={fuelTypes}
+                                searchInputPlaceholder={'Фільтр Тип/Вартість/...'}
+                                selectedData={[fuelTypes[0]]}
+                                itemsPerTable={3}
+                                selectionProps={{
+                                    multipleSelection: false,
+                                    canUnSelect: false,
+                                    selectionHandler: handleSelectFuelType
+                                }}
+                            />
+                        </SectionItem>
+                        <SectionItem>
+                            <SectionHeader>Додати Транспортний Засіб</SectionHeader>
+                            <VehicleForm
+                                addingHandler={handleAddVehicle}
+                                selectedFuelType={selectedFuelType}
+                            />
+                        </SectionItem>
                     </SectionContainer>
                     <SectionContainer direction={'column'}>
-                        <DataTable<Vehicle>
-                            columns={vehicleColumns}
-                            data={vehicles}
-                            searchInputPlaceholder={'Фільтр Марка/Модель/...'}
-                            itemsPerTable={5}
-                            removingHandler={handleRemoveVehicle}
-                        />
+                        <SectionItem>
+                            <SectionHeader>Транспортні Засоби</SectionHeader>
+                            <DataTable<Vehicle>
+                                columns={vehicleColumns}
+                                data={vehicles}
+                                searchInputPlaceholder={'Фільтр Марка/Модель/...'}
+                                itemsPerTable={5}
+                                removingHandler={handleRemoveVehicle}
+                            />
+                        </SectionItem>
                     </SectionContainer>
                 </MainContainerBody>
             </MainContainer>

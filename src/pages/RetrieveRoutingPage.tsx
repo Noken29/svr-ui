@@ -6,7 +6,7 @@ import {
     MainContainer,
     MainContainerBody,
     MainContainerHeader, PageFooter,
-    PageHeader, SectionContainer,
+    PageHeader, SectionContainer, SectionHeader, SectionItem,
     ToolbarContainer
 } from "../styles/page.styled";
 import {ControlButton} from "../styles/controls.styled";
@@ -36,17 +36,20 @@ export const RetrieveRoutingPage: React.FC<RetrieveRoutingPageProps> = (props) =
                 </MainContainerHeader>
                 <MainContainerBody>
                     <SectionContainer direction={'row'}>
-                        <DataTable
-                            columns={routingSessionInfoColumns}
-                            data={props.routingSessionInfos}
-                            searchInputPlaceholder={'Фільтр Номер/Назва/...'}
-                            itemsPerTable={15}
-                            selectionProps={{
-                                multipleSelection: false,
-                                canUnSelect: false,
-                                selectionHandler: props.selectRoutingSessionHandler
-                            }}
-                        />
+                        <SectionItem>
+                            <SectionHeader>Сеанси Маршрутизації</SectionHeader>
+                            <DataTable
+                                columns={routingSessionInfoColumns}
+                                data={props.routingSessionInfos}
+                                searchInputPlaceholder={'Фільтр Номер/Назва/...'}
+                                itemsPerTable={15}
+                                selectionProps={{
+                                    multipleSelection: false,
+                                    canUnSelect: false,
+                                    selectionHandler: props.selectRoutingSessionHandler
+                                }}
+                            />
+                        </SectionItem>
                     </SectionContainer>
                 </MainContainerBody>
             </MainContainer>

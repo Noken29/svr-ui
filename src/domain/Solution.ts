@@ -105,6 +105,7 @@ export class Route implements Tabulated {
         const routeBean = bean.routes[index]
         this.vehicle = bean.vehicles.filter(v => v.id === routeBean.vehicleId)[0]
         this.customers = routeBean.customersIds.map(id => new Customer(bean.customers.filter(c => c.id === id)[0]))
+        this.customers.forEach(c => c.packages = c.packages.filter(p => routeBean.packagesIds.indexOf(p.id ?? -1) !== -1))
         this.packages = routeBean.packagesIds
             .map(id => this.customers
                 .map(c => c.packages

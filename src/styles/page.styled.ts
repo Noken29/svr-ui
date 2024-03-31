@@ -46,6 +46,21 @@ export const SectionContainer = styled(MaxWidthContainer)<{direction: string}>`
   padding: 30px 10px 0 10px;
 `
 
+export const SectionHeader = styled.div`
+  background-color: ${ColorScheme.LIGHTCYAN};
+  padding: 20px 15px;
+
+  font-family: ${Fonts.MAIN_FONT};
+  font-weight: bold;
+  font-size: 18pt;
+
+  color: ${ColorScheme.DARKBLUE_ACTIVE};
+  border-radius: 10px;
+  border: 0;
+  
+  text-align: center;
+`
+
 export const SectionItem = styled(MaxWidthContainer)`
   display: grid;
   align-items: flex-start;

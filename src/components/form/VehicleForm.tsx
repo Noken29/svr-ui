@@ -44,14 +44,13 @@ export class VehicleForm extends DynamicForm<VehicleFormProps, VehicleFormState,
             <SectionItem>
                 <FormWrapper>
                     <Form onSubmit={this.handleSubmit}>
-                        <FormHeader>Додати ТЗ</FormHeader>
-                        <FormContainer direction={'column'}>
                             <FormInput
                                 type={'text'}
                                 id={'description'}
                                 name={'description'}
                                 placeholder={'Марка/Модель'}
                             />
+                        <FormContainer direction={'row'}>
                             <FormInput
                                 type={'number'}
                                 name={'carryingCapacity'}
@@ -67,6 +66,8 @@ export class VehicleForm extends DynamicForm<VehicleFormProps, VehicleFormState,
                                 name={'fuelConsumption'}
                                 placeholder={'Споживання пального'}
                             />
+                        </FormContainer>
+                        <FormContainer direction={'column'}>
                             <FormSubmitButton>Додати</FormSubmitButton>
                         </FormContainer>
                     </Form>

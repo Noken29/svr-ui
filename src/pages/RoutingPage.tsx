@@ -6,7 +6,7 @@ import {
     MainContainer,
     MainContainerBody,
     MainContainerHeader, PageFooter,
-    PageHeader, SectionContainer,
+    PageHeader, SectionContainer, SectionHeader, SectionItem,
     ToolbarContainer
 } from "../styles/page.styled";
 import {ControlButton} from "../styles/controls.styled";
@@ -21,6 +21,7 @@ import {RoutingSessionMainInfoForm} from "../components/form/RoutingSessionMainI
 import {Depot} from "../domain/Depot";
 import {Position} from "google-map-react";
 import {RoutingMap} from "../components/map/RoutingMap";
+import {formatDate} from "../utils/FormatUtils";
 
 interface RoutingPageProps {
     routingSession?: RoutingSession,
@@ -125,6 +126,8 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                             <ControlButton
                                 onClick={() => props.savingHandler(buildRoutingSessionBean()).then((value) => setSaved(value))}
                                 disabled={saved}
+                                margin={'0 10px 0 0'}
+                                title={'Збережено: ' + (props.routingSession?.lastSaved.toString() ? formatDate(props.routingSession?.lastSaved.toString()) : 'Не збережено')}
                             >
                                 Зберегти
                             </ControlButton>
@@ -148,19 +151,22 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                     </ToolbarContainer>
                 </MainContainerHeader>
                 <MainContainerBody>
-                    <SectionContainer direction={'column'}>
+                    <SectionContainer direction={'row'}>
+                        <SectionHeader>Сеанс Маршрутизації</SectionHeader>
                         <RoutingSessionMainInfoForm
                             addingHandler={handleAddMainInfo}
-                            lastSaved={props.routingSession?.lastSaved ?? 'Не збережено'}
                             position={position}
                         />
                     </SectionContainer>
                     <SectionContainer direction={'column'}>
-                        <CustomerForm
-                            addingHandler={handleAddCustomer}
-                            onChangeHandler={handleChangeCustomerForm}
-                            position={position}
-                        />
+                        <SectionItem>
+                            <SectionHeader>Додати Клієнта</SectionHeader>
+                            <CustomerForm
+                                addingHandler={handleAddCustomer}
+                                onChangeHandler={handleChangeCustomerForm}
+                                position={position}
+                            />
+                        </SectionItem>
                         <RoutingMap
                             depot={depot}
                             customers={customers}
@@ -170,52 +176,63 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                         />
                     </SectionContainer>
                     <SectionContainer direction={'row'}>
-                        <DataTable<Customer>
-                            columns={customerColumns}
-                            data={customers}
-                            selectedData={selectedCustomer ? [selectedCustomer] : []}
-                            searchInputPlaceholder={'Фільтр Ім\'я/Номер Телефону/...'}
-                            itemsPerTable={5}
-                            selectionProps={{
-                                multipleSelection: false,
-                                canUnSelect: true,
-                                selectionHandler: handleSelectCustomer
-                            }}
-                            removingHandler={handleRemoveCustomer}
-                        />
+                        <SectionItem>
+                            <SectionHeader>Клієнти</SectionHeader>
+                            <DataTable<Customer>
+                                columns={customerColumns}
+                                data={customers}
+                                selectedData={selectedCustomer ? [selectedCustomer] : []}
+                                searchInputPlaceholder={'Фільтр Ім\'я/Номер Телефону/...'}
+                                itemsPerTable={5}
+                                selectionProps={{
+                                    multipleSelection: false,
+                                    canUnSelect: true,
+                                    selectionHandler: handleSelectCustomer
+                                }}
+                                removingHandler={handleRemoveCustomer}
+                            />
+                        </SectionItem>
                     </SectionContainer>
                     {selectedCustomer !== undefined && (
                         <SectionContainer direction={'column'}>
-                            <PackageForm
-                                addingHandler={handleAddPackage}
-                            />
+                            <SectionItem>
+                                <SectionHeader>Додати Вантаж</SectionHeader>
+                                <PackageForm
+                                    addingHandler={handleAddPackage}
+                                />
+                            </SectionItem>
                         </SectionContainer>
-                        )
-                    }
+                    )}
                     {selectedCustomer !== undefined && (
                         <SectionContainer direction={'row'}>
-                            <DataTable<Package>
-                                columns={packageColumns}
-                                data={selectedCustomer?.packages}
-                                searchInputPlaceholder={'Фільтр Тип/Вага/Об\'єм/...'}
-                                itemsPerTable={5}
-                                removingHandler={handleRemovePackage}
-                            />
+                            <SectionItem>
+                                <SectionHeader>Клієнт - {selectedCustomer.name}: Вантажі</SectionHeader>
+                                <DataTable<Package>
+                                    columns={packageColumns}
+                                    data={selectedCustomer?.packages}
+                                    searchInputPlaceholder={'Фільтр Тип/Вага/Об\'єм/...'}
+                                    itemsPerTable={5}
+                                    removingHandler={handleRemovePackage}
+                                />
+                            </SectionItem>
                         </SectionContainer>
                     )}
                     <SectionContainer direction={'row'}>
-                        <DataTable<Vehicle>
-                            columns={vehicleColumns}
-                            data={vehicles}
-                            selectedData={selectedVehicles}
-                            searchInputPlaceholder={'Фільтр Марка/Модель/...'}
-                            itemsPerTable={10}
-                            selectionProps={{
-                                multipleSelection: true,
-                                canUnSelect: true,
-                                selectionHandler: handleSelectVehicle
-                            }}
-                        />
+                        <SectionItem>
+                            <SectionHeader>Транспортні Засоби</SectionHeader>
+                            <DataTable<Vehicle>
+                                columns={vehicleColumns}
+                                data={vehicles}
+                                selectedData={selectedVehicles}
+                                searchInputPlaceholder={'Фільтр Марка/Модель/...'}
+                                itemsPerTable={10}
+                                selectionProps={{
+                                    multipleSelection: true,
+                                    canUnSelect: true,
+                                    selectionHandler: handleSelectVehicle
+                                }}
+                            />
+                        </SectionItem>
                     </SectionContainer>
                 </MainContainerBody>
             </MainContainer>
