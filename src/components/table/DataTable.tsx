@@ -18,8 +18,8 @@ import {
 } from "./table.styled";
 import React, {useState} from "react";
 import {ColorScheme} from "../../styles/global";
-import {ControlButton, Input, RemoveButton} from "../../styles/controls.styled";
-import {Control, SectionItem} from "../../styles/page.styled";
+import {Input, RemoveButton} from "../../styles/controls.styled";
+import {ConditionalSectionItem, Control} from "../../styles/page.styled";
 import {Tabulated} from "../../domain/Tabulated";
 
 interface SelectionProps<TData> {
@@ -29,6 +29,7 @@ interface SelectionProps<TData> {
 }
 
 interface DataTableProps<TData extends Tabulated> {
+    display?: boolean
     columns: ColumnDef<TData>[]
     data: TData[]
     searchInputPlaceholder: string
@@ -39,6 +40,7 @@ interface DataTableProps<TData extends Tabulated> {
 }
 
 export function DataTable<TData extends Tabulated> ({
+    display,
     columns,
     data,
     itemsPerTable,
@@ -96,7 +98,7 @@ export function DataTable<TData extends Tabulated> ({
     }
 
     return (
-        <SectionItem>
+        <ConditionalSectionItem display={display ?? true}>
             <Control>
                 <Input
                     value={globalFilter ?? ''}
@@ -190,6 +192,6 @@ export function DataTable<TData extends Tabulated> ({
                     </TableControlButton>
                 </TableFooter>
             </TableWrapper>
-        </SectionItem>
+        </ConditionalSectionItem>
     )
 }

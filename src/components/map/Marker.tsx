@@ -82,6 +82,7 @@ export const DepotMarker: React.FC<DepotMarkerProps> = (props) => {
 interface CustomerMarkerProps {
     customer: Customer
     routeIndex?: number
+    textOverride?: string
 }
 
 export const CustomerMarker: React.FC<CustomerMarkerProps> = (props) => {
@@ -90,7 +91,7 @@ export const CustomerMarker: React.FC<CustomerMarkerProps> = (props) => {
         {textAndFillColor: ColorScheme.BLUE_ACTIVE, strokeColor: ColorScheme.DARKBLUE_ACTIVE}
 
     return <Marker
-        text={props.customer.name}
+        text={props.textOverride ?? props.customer.name}
         textAndFillColor={colorScheme.textAndFillColor}
         strokeColor={colorScheme.strokeColor}
         latitude={props.customer.latitude}

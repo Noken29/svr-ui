@@ -124,6 +124,7 @@ export const routeColumns: ColumnDef<Route>[] = [
     {
         accessorKey: 'index',
         header: 'Номер',
+        cell: ({ row }) => row.original.index + 1
     },
     {
         accessorKey: 'vehicleDescription',

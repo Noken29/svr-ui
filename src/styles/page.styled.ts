@@ -56,6 +56,10 @@ export const SectionItem = styled(MaxWidthContainer)`
   padding: 0;
 `
 
+export const ConditionalSectionItem = styled(SectionItem)<{display: boolean}>`
+  display: ${props => props.display ? 'grid' : 'none'};
+`
+
 export const MainContainer = styled.main`
 `
 

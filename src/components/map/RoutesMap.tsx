@@ -19,7 +19,7 @@ export const RoutesMap = (props: RoutesMapProps) => {
         setDisplayRoutes(true)
     }
 
-    if (props.routeIndex)
+    if (props.routeIndex !== undefined)
         return (
             <GoogleMap
                 mapContainerStyle={{
@@ -129,9 +129,9 @@ export const RouteDirection: React.FC<RouteDirectionProps> = (props) => {
 
     return (
         <>
-            {props.displayCustomers && props.customers.map(c => {
+            {props.displayCustomers && props.customers.map((c, index) => {
                 if (c.latitude && c.longitude)
-                    return <CustomerMarker customer={c} routeIndex={props.routeIndex}/>
+                    return <CustomerMarker customer={c} routeIndex={props.routeIndex} textOverride={`#${index+1}: ${c.name}`}/>
             })}
             <SingleDirection routeIndex={props.routeIndex} from={props.depot.asPosition()} to={props.customers[0].asPosition()}/>
             {props.customers.map((c, index) => {
@@ -144,7 +144,7 @@ export const RouteDirection: React.FC<RouteDirectionProps> = (props) => {
                     />
                 }
             })}
-            <SingleDirection routeIndex={props.routeIndex} from={props.customers[props.customers.length - 1].asPosition()} to={props.depot.asPosition()}/>
+            <SingleDirection routeIndex={props.routeIndex} from={props.depot.asPosition()} to={props.customers[props.customers.length - 1].asPosition()}/>
         </>
     )
 }
