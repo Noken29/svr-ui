@@ -16,8 +16,7 @@ const warningLabels = {
     typeIsMissed: 'Ви не вказали тип вантажу. Встановлено значення за замовчуванням.'
 }
 
-export interface PackageFormProps extends DynamicFormProps<PackageBean> {
-}
+export interface PackageFormProps extends DynamicFormProps<PackageBean> {}
 
 export interface PackageFormState extends DynamicFormState<PackageBean> {}
 
@@ -47,6 +46,7 @@ export class PackageForm extends DynamicForm<PackageFormProps, PackageFormState,
                 cost: e.target.cost.valueAsNumber
             } as PackageBean
         )
+        super.clearWarnings(2500)
     }
 
     validateErrors(e: any) {
@@ -109,10 +109,12 @@ export class PackageForm extends DynamicForm<PackageFormProps, PackageFormState,
                         </FormContainer>
                         <FormContainer direction={'column'}>
                             <FormSubmitButton type={'submit'}>Додати</FormSubmitButton>
-                        </FormContainer>
-                        <FormContainer direction={'column'}>
-                            <ErrorsCard errors={this.state.validationErrors} disableBackgroundColor={true}/>
-                            {this.state.validationErrors.length === 0 && <WarningsCard warnings={this.state.validationWarnings} disableBackgroundColor={true}/>}
+                            {this.state.validationErrors.length !== 0 && (
+                                <ErrorsCard errors={this.state.validationErrors} disableBackgroundColor={true}/>
+                            )}
+                            {this.state.validationErrors.length === 0 && this.state.validationWarnings.length !== 0 && (
+                                <WarningsCard warnings={this.state.validationWarnings} disableBackgroundColor={true}/>
+                            )}
                         </FormContainer>
                     </Form>
                 </FormWrapper>

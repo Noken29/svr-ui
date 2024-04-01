@@ -65,6 +65,7 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
             this.setState({
                 validationErrors: []
             })
+            super.clearWarnings(2500)
         }
     }
 
@@ -96,7 +97,7 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
             <SectionItem>
                 <FormWrapper>
                     <Form onSubmit={this.handleSubmit} onChange={this.props.onChangeHandler}>
-                        <FormContainer direction={'column'}>
+                        <FormContainer direction={'row'}>
                             <FormRequiredInput
                                 id={'c-name'}
                                 type={'text'}
@@ -110,6 +111,8 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                                 name={'phoneNumber'}
                                 placeholder={'Номер Телефону'}
                             />
+                        </FormContainer>
+                        <FormContainer direction={'column'}>
                             <FormRequiredInput
                                 id={'c-address-lines'}
                                 type={'text'}
@@ -118,16 +121,22 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                                 placeholder={'Адреса*'}
                                 isErrorPresent={this.state.validationErrors.includes(errorLabels.addressLinesIsRequired)}
                             />
+                        </FormContainer>
+                        <FormContainer direction={'column'}>
                             <FormTextArea
                                 id={'c-special-requirements'}
                                 name={'specialRequirements'}
                                 placeholder={'Вимоги'}
                             />
-                            <FormSubmitButton type={'submit'}>Додати</FormSubmitButton>
                         </FormContainer>
                         <FormContainer direction={'column'}>
-                            <ErrorsCard errors={this.state.validationErrors} disableBackgroundColor={true}/>
-                            {this.state.validationErrors.length === 0 && <WarningsCard warnings={this.state.validationWarnings} disableBackgroundColor={true}/>}
+                            <FormSubmitButton type={'submit'}>Додати</FormSubmitButton>
+                            {this.state.validationErrors.length !== 0 && (
+                                <ErrorsCard errors={this.state.validationErrors} disableBackgroundColor={true}/>
+                            )}
+                            {this.state.validationErrors.length === 0 && this.state.validationWarnings.length !== 0 && (
+                                <WarningsCard warnings={this.state.validationWarnings} disableBackgroundColor={true}/>
+                            )}
                         </FormContainer>
                     </Form>
                 </FormWrapper>

@@ -15,6 +15,14 @@ export abstract class DynamicForm<P extends DynamicFormProps<T>, S extends Dynam
         super(props, contex);
     }
 
+    clearWarnings(after: number) {
+        setTimeout(() => {
+            this.setState({
+                validationWarnings: []
+            })
+        }, after)
+    }
+
     abstract handleSubmit(e: any): void
 }
 

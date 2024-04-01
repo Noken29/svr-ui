@@ -80,42 +80,33 @@ export class RoutingSessionMainInfoForm extends DynamicForm<RoutingSessionMainIn
 
     render() {
         return (
-            <SectionItem>
-                <FormWrapper>
-                    <Form onSubmit={this.handleSubmit}>
-                        <FormContainer direction={'row'}>
-                            <FormRequiredInput
-                                id={'d-address-lines'}
-                                type={'text'}
-                                name={'addressLines'}
-                                value={this.getAddressLines()}
-                                placeholder={'Адреса Депо*'}
-                                isErrorPresent={this.state.validationErrors.includes(errorLabels.addressLinesIsRequired)}
-                                disabled={true}
-                            />
-                            <FormRequiredInput
-                                id={'rs-description'}
-                                type={'text'}
-                                name={'description'}
-                                value={this.props?.description}
-                                placeholder={'Назва*'}
-                                isErrorPresent={this.state.validationErrors.includes(errorLabels.descriptionIsRequired)}
-                            />
-                        </FormContainer>
-                        <FormContainer direction={'row'}>
-                            <FormSubmitButton
-                                type={'submit'}
-                                disabled={!this.props.position}
-                            >
-                                Ок
-                            </FormSubmitButton>
-                        </FormContainer>
-                        <FormContainer direction={'row'}>
-                            <ErrorsCard errors={this.state.validationErrors} disableBackgroundColor={true}/>
-                        </FormContainer>
-                    </Form>
-                </FormWrapper>
-            </SectionItem>
+            <FormWrapper>
+                <Form onSubmit={this.handleSubmit}>
+                    <FormContainer direction={'row'}>
+                        <FormRequiredInput
+                            id={'d-address-lines'}
+                            type={'text'}
+                            name={'addressLines'}
+                            value={this.getAddressLines()}
+                            placeholder={'Адреса Депо*'}
+                            isErrorPresent={this.state.validationErrors.includes(errorLabels.addressLinesIsRequired)}
+                            disabled={true}
+                        />
+                        <FormRequiredInput
+                            id={'rs-description'}
+                            type={'text'}
+                            name={'description'}
+                            value={this.props?.description}
+                            placeholder={'Назва*'}
+                            isErrorPresent={this.state.validationErrors.includes(errorLabels.descriptionIsRequired)}
+                        />
+                    </FormContainer>
+                    <FormContainer direction={'row'}>
+                        <FormSubmitButton type={'submit'} disabled={!this.props.position}>Ок</FormSubmitButton>
+                        <ErrorsCard errors={this.state.validationErrors} disableBackgroundColor={true}/>
+                    </FormContainer>
+                </Form>
+            </FormWrapper>
         )
     }
 

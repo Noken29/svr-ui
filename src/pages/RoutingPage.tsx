@@ -238,49 +238,41 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                         </ContainerItem>
                         <ContainerItem justifyContent={'flex-end'}>
                             <Link to={ClientConfiguration.routesPage.path.replace(':routingSessionId', props.routingSession?.id?.toString() ?? '')}>
-                                <ControlButton
-                                    disabled={!props.haveSolutions}
-                                    margin={'0 10px 0 0'}
-                                >
-                                    Маршрути
-                                </ControlButton>
+                                <ControlButton margin={'0 10px 0 0'} disabled={!props.haveSolutions}>Маршрути</ControlButton>
                             </Link>
-                            <ControlButton
-                                onClick={() => props.makeRoutesHandler()}
-                                disabled={!saved}
-                            >
-                                Побудувати Маршрути
-                            </ControlButton>
+                            <ControlButton onClick={() => props.makeRoutesHandler()} disabled={!saved}>Побудувати Маршрути</ControlButton>
                         </ContainerItem>
                     </ToolbarContainer>
                 </MainContainerHeader>
                 <MainContainerBody>
                     <SectionContainer direction={'row'}>
-                        <SectionHeader>Сеанс Маршрутизації</SectionHeader>
-                        <RoutingSessionMainInfoForm
-                            addingHandler={handleAddMainInfo}
-                            position={selectedPosition}
-                            depot={depot}
-                            description={description}
-                        />
-                        {mainInfoValidationErrors.length !== 0 && <ErrorsCard errors={mainInfoValidationErrors} disableBackgroundColor={false}/>}
+                        <SectionItem>
+                            <SectionHeader>Сеанс Маршрутизації</SectionHeader>
+                            <RoutingSessionMainInfoForm
+                                addingHandler={handleAddMainInfo}
+                                position={selectedPosition}
+                                depot={depot}
+                                description={description}
+                            />
+                            {mainInfoValidationErrors.length !== 0 && <ErrorsCard errors={mainInfoValidationErrors} disableBackgroundColor={false}/>}
+                        </SectionItem>
                     </SectionContainer>
                     <SectionContainer direction={'column'}>
                         <SectionItem>
-                            <SectionHeader>Додати Клієнта</SectionHeader>
+                            <SectionHeader>Обрати Депо / Додати Клієнта</SectionHeader>
+                            <RoutingMap
+                                depot={depot}
+                                customers={customers}
+                                selectedCustomer={selectedCustomer}
+                                processCoordinatesHandler={handleChangeCoordinates}
+                                selectionHandler={handleSelectCustomer}
+                            />
                             <CustomerForm
                                 addingHandler={handleAddCustomer}
                                 onChangeHandler={handleChangeCustomerForm}
                                 position={selectedPosition}
                             />
                         </SectionItem>
-                        <RoutingMap
-                            depot={depot}
-                            customers={customers}
-                            selectedCustomer={selectedCustomer}
-                            processCoordinatesHandler={handleChangeCoordinates}
-                            selectionHandler={handleSelectCustomer}
-                        />
                     </SectionContainer>
                     <SectionContainer direction={'row'}>
                         <SectionItem>
@@ -300,31 +292,27 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                             />
                             {customersValidationErrors.length !== 0 && <ErrorsCard errors={customersValidationErrors} disableBackgroundColor={false}/>}
                         </SectionItem>
+                        {selectedCustomer !== undefined && (
+                            <>
+                                <SectionItem>
+                                    <SectionHeader>Додати Вантаж</SectionHeader>
+                                    <PackageForm
+                                        addingHandler={handleAddPackage}
+                                    />
+                                </SectionItem>
+                                <SectionItem>
+                                    <SectionHeader>Клієнт - {selectedCustomer.name}: Вантажі</SectionHeader>
+                                    <DataTable<Package>
+                                        columns={packageColumns}
+                                        data={customersPackages.get(selectedCustomer.key()) ?? []}
+                                        searchInputPlaceholder={'Фільтр Тип/Вага/Об\'єм/...'}
+                                        itemsPerTable={5}
+                                        removingHandler={handleRemovePackage}
+                                    />
+                                </SectionItem>
+                            </>
+                        )}
                     </SectionContainer>
-                    {selectedCustomer !== undefined && (
-                        <SectionContainer direction={'column'}>
-                            <SectionItem>
-                                <SectionHeader>Додати Вантаж</SectionHeader>
-                                <PackageForm
-                                    addingHandler={handleAddPackage}
-                                />
-                            </SectionItem>
-                        </SectionContainer>
-                    )}
-                    {selectedCustomer !== undefined && (
-                        <SectionContainer direction={'row'}>
-                            <SectionItem>
-                                <SectionHeader>Клієнт - {selectedCustomer.name}: Вантажі</SectionHeader>
-                                <DataTable<Package>
-                                    columns={packageColumns}
-                                    data={customersPackages.get(selectedCustomer.key()) ?? []}
-                                    searchInputPlaceholder={'Фільтр Тип/Вага/Об\'єм/...'}
-                                    itemsPerTable={5}
-                                    removingHandler={handleRemovePackage}
-                                />
-                            </SectionItem>
-                        </SectionContainer>
-                    )}
                     <SectionContainer direction={'row'}>
                         <SectionItem>
                             <SectionHeader>Транспортні Засоби</SectionHeader>

@@ -6,7 +6,7 @@ import {
     MainContainer,
     MainContainerBody,
     MainContainerHeader, PageFooter,
-    PageHeader, SectionContainer, SectionHeader,
+    PageHeader, SectionContainer, SectionHeader, SectionItem,
     ToolbarContainer
 } from "../styles/page.styled";
 import {ControlButton} from "../styles/controls.styled";
@@ -80,21 +80,23 @@ export const RoutesPage: React.FC<RoutesPageProps> = (props) => {
                 </MainContainerHeader>
                 <MainContainerBody>
                     <SectionContainer direction={'row'}>
-                        <SectionHeader>Таблиця Розв'язків</SectionHeader>
-                        <DataTable
-                            columns={solutionColumns}
-                            data={props.solutions}
-                            searchInputPlaceholder={'Введіть Номер/К-сть Маршрутів/...'}
-                            itemsPerTable={5}
-                            selectionProps={{
-                                multipleSelection: false,
-                                canUnSelect: true,
-                                selectionHandler: selectSolutionHandler,
-                            }}
-                        />
+                        <SectionItem>
+                            <SectionHeader>Таблиця Розв'язків</SectionHeader>
+                            <DataTable
+                                columns={solutionColumns}
+                                data={props.solutions}
+                                searchInputPlaceholder={'Введіть Номер/К-сть Маршрутів/...'}
+                                itemsPerTable={5}
+                                selectionProps={{
+                                    multipleSelection: false,
+                                    canUnSelect: true,
+                                    selectionHandler: selectSolutionHandler,
+                                }}
+                            />
+                        </SectionItem>
                         {props.solutions.map(s => {
                             return (
-                                <>
+                                <SectionItem>
                                     {s === selectedSolution && <SectionHeader>Розв'язок №{selectedSolution?.id}: Маршрути</SectionHeader>}
                                     <RoutesMap
                                         key={s.key()}
@@ -125,26 +127,28 @@ export const RoutesPage: React.FC<RoutesPageProps> = (props) => {
                                             solution={s}
                                         />
                                     })}
-                                </>
+                                </SectionItem>
                             )
                         })}
                     </SectionContainer>
                     {selectedSolution !== undefined && selectedRouteIndexes.get(selectedSolution.key()) === undefined && (
                         <SectionContainer direction={'row'}>
-                            <SectionHeader>Розв'язок №{selectedSolution?.id}: Клієнти</SectionHeader>
-                            <DataTable
-                                columns={customerColumns}
-                                data={selectedSolution.customers}
-                                searchInputPlaceholder={'Фільтр Ім\'я/Номер Телефону/...'}
-                                itemsPerTable={5}
-                                selectionProps={{
-                                    multipleSelection: false,
-                                    canUnSelect: true,
-                                    selectionHandler: handleSelectCustomer
-                                }}
-                            />
+                            <SectionItem>
+                                <SectionHeader>Розв'язок №{selectedSolution?.id}: Клієнти</SectionHeader>
+                                <DataTable
+                                    columns={customerColumns}
+                                    data={selectedSolution.customers}
+                                    searchInputPlaceholder={'Фільтр Ім\'я/Номер Телефону/...'}
+                                    itemsPerTable={5}
+                                    selectionProps={{
+                                        multipleSelection: false,
+                                        canUnSelect: true,
+                                        selectionHandler: handleSelectCustomer
+                                    }}
+                                />
+                            </SectionItem>
                             {selectedCustomer && (
-                                <>
+                                <SectionItem>
                                     <SectionHeader>Розв'язок №{selectedSolution?.id}, Клієнт - {selectedCustomer.name}: Вантажі</SectionHeader>
                                     <DataTable
                                         columns={packageColumns}
@@ -152,26 +156,28 @@ export const RoutesPage: React.FC<RoutesPageProps> = (props) => {
                                         searchInputPlaceholder={'Фільтр Тип/Вага/Об\'єм/...'}
                                         itemsPerTable={5}
                                     />
-                                </>
+                                </SectionItem>
                             )}
                         </SectionContainer>
                     )}
                     {selectedSolution && selectedRouteIndexes.get(selectedSolution.key()) !== undefined && selectedRouteIndex !== undefined && (
                         <SectionContainer direction={'row'}>
-                            <SectionHeader>Розв'язок №{selectedSolution?.id}, Маршрут №{selectedRouteIndex + 1}: Клієнти</SectionHeader>
-                            <DataTable
-                                columns={customerColumns}
-                                data={selectedSolution.routes[selectedRouteIndex].customers}
-                                searchInputPlaceholder={'Фільтр Ім\'я/Номер Телефону/...'}
-                                itemsPerTable={5}
-                                selectionProps={{
-                                    multipleSelection: false,
-                                    canUnSelect: true,
-                                    selectionHandler: handleSelectCustomer
-                                }}
-                            />
+                            <SectionItem>
+                                <SectionHeader>Розв'язок №{selectedSolution?.id}, Маршрут №{selectedRouteIndex + 1}: Клієнти</SectionHeader>
+                                <DataTable
+                                    columns={customerColumns}
+                                    data={selectedSolution.routes[selectedRouteIndex].customers}
+                                    searchInputPlaceholder={'Фільтр Ім\'я/Номер Телефону/...'}
+                                    itemsPerTable={5}
+                                    selectionProps={{
+                                        multipleSelection: false,
+                                        canUnSelect: true,
+                                        selectionHandler: handleSelectCustomer
+                                    }}
+                                />
+                            </SectionItem>
                             {selectedCustomer && (
-                                <>
+                                <SectionItem>
                                     <SectionHeader>Розв'язок №{selectedSolution?.id}, Маршрут №{selectedRouteIndex + 1}, Клієнт - {selectedCustomer.name}: Вантажі</SectionHeader>
                                     <DataTable
                                         columns={packageColumns}
@@ -179,7 +185,7 @@ export const RoutesPage: React.FC<RoutesPageProps> = (props) => {
                                         searchInputPlaceholder={'Фільтр Тип/Вага/Об\'єм/...'}
                                         itemsPerTable={5}
                                     />
-                                </>
+                                </SectionItem>
                             )}
                         </SectionContainer>
                     )}

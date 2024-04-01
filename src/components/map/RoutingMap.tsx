@@ -44,7 +44,7 @@ export const RoutingMap = (props: RoutingMapProps) => {
     return (
         <GoogleMap
             mapContainerStyle={{
-                height: '100%',
+                height: '650px',
                 boxSizing: 'border-box',
                 borderRadius: '10px',
                 border: '3px solid' + ColorScheme.LIGHTCYAN,
