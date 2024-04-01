@@ -1,10 +1,20 @@
 import React from "react";
 import {DynamicForm, DynamicFormProps, DynamicFormState} from "./DynamicForm";
 import {PackageBean} from "../../domain/Package";
-import {Form, FormContainer, FormInput, FormSubmitButton, FormWrapper} from "./form.styled";
+import {Form, FormContainer, FormInput, FormRequiredInput, FormSubmitButton, FormWrapper} from "./form.styled";
 import {SectionItem} from "../../styles/page.styled";
 import {ErrorsCard} from "../validation/ErrorsCard";
 import {WarningsCard} from "../validation/WarningsCard";
+
+const errorLabels = {
+    weightIsRequired: 'Вкажіть вагу вантажу.',
+    volumeIsRequired: 'Вкажіть об\'єм вантажу.',
+    costIsRequired: 'Вкажіть вартість доставки вантажу.'
+}
+
+const warningLabels = {
+    typeIsMissed: 'Ви не вказали тип вантажу. Встановлено значення за замовчуванням.'
+}
 
 export interface PackageFormProps extends DynamicFormProps<PackageBean> {
 }
@@ -44,13 +54,13 @@ export class PackageForm extends DynamicForm<PackageFormProps, PackageFormState,
         const warningStrings = []
         e.preventDefault()
         if (e.target.type.value === '')
-            warningStrings.push('Ви не вказали тип вантажу. Встановлено значення за замовчуванням.')
+            warningStrings.push(warningLabels.typeIsMissed)
         if (!e.target.weight.valueAsNumber)
-            errorStrings.push('Вкажіть вагу вантажу.')
+            errorStrings.push(errorLabels.weightIsRequired)
         if (!e.target.volume.valueAsNumber)
-            errorStrings.push('Вкажіть об\'єм вантажу.')
+            errorStrings.push(errorLabels.volumeIsRequired)
         if (!e.target.cost.valueAsNumber)
-            errorStrings.push('Вкажіть вартість доставки вантажу.')
+            errorStrings.push(errorLabels.costIsRequired)
         this.setState({
             validationErrors: errorStrings,
             validationWarnings: warningStrings
@@ -70,28 +80,31 @@ export class PackageForm extends DynamicForm<PackageFormProps, PackageFormState,
                                 name={'type'}
                                 placeholder={'Тип'}
                             />
-                            <FormInput
+                            <FormRequiredInput
                                 id={'p-weight'}
                                 type={'number'}
                                 step="0.001"
                                 name={'weight'}
                                 placeholder={'Вага*'}
+                                isErrorPresent={this.state.validationErrors.includes(errorLabels.weightIsRequired)}
                             />
                         </FormContainer>
                         <FormContainer direction={'row'}>
-                            <FormInput
+                            <FormRequiredInput
                                 id={'p-volume'}
                                 type={'number'}
                                 step="0.001"
                                 name={'volume'}
                                 placeholder={'Об\'єм*'}
+                                isErrorPresent={this.state.validationErrors.includes(errorLabels.volumeIsRequired)}
                             />
-                            <FormInput
+                            <FormRequiredInput
                                 id={'p-cost'}
                                 type={'number'}
                                 step="0.01"
                                 name={'cost'}
                                 placeholder={'Вартість Доставки*'}
+                                isErrorPresent={this.state.validationErrors.includes(errorLabels.costIsRequired)}
                             />
                         </FormContainer>
                         <FormContainer direction={'column'}>

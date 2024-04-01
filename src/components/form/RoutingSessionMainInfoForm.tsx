@@ -2,7 +2,7 @@ import React from "react";
 import {
     Form,
     FormContainer,
-    FormInput,
+    FormInput, FormRequiredInput,
     FormSubmitButton,
     FormWrapper
 } from "./form.styled";
@@ -12,6 +12,11 @@ import DynamicForm, {DynamicFormProps, DynamicFormState} from "./DynamicForm";
 import {RoutingSessionMainInfoBean} from "../../domain/RoutingSession";
 import {Position} from "../map/Utils";
 import {ErrorsCard} from "../validation/ErrorsCard";
+
+const errorLabels = {
+    addressLinesIsRequired: 'Оберіть адресу депо на мапі.',
+    descriptionIsRequired: 'Вкажіть назву сеансу маршрутизації.'
+}
 
 interface RoutingSessionMainInfoFormProps extends DynamicFormProps<RoutingSessionMainInfoBean> {
     position?: Position
@@ -58,9 +63,9 @@ export class RoutingSessionMainInfoForm extends DynamicForm<RoutingSessionMainIn
         const errorsStrings = []
         e.preventDefault()
         if (!this.props.position?.addressLines)
-            errorsStrings.push('Оберіть адресу депо на мапі.')
+            errorsStrings.push(errorLabels.addressLinesIsRequired)
         if (e.target.description.value === '')
-            errorsStrings.push('Вкажіть назву сеансу маршрутизації.')
+            errorsStrings.push(errorLabels.descriptionIsRequired)
         this.setState({
             validationErrors: errorsStrings
         })
@@ -79,23 +84,31 @@ export class RoutingSessionMainInfoForm extends DynamicForm<RoutingSessionMainIn
                 <FormWrapper>
                     <Form onSubmit={this.handleSubmit}>
                         <FormContainer direction={'row'}>
-                            <FormInput
+                            <FormRequiredInput
                                 id={'d-address-lines'}
                                 type={'text'}
                                 name={'addressLines'}
                                 value={this.getAddressLines()}
                                 placeholder={'Адреса Депо*'}
+                                isErrorPresent={this.state.validationErrors.includes(errorLabels.addressLinesIsRequired)}
+                                disabled={true}
                             />
-                            <FormInput
+                            <FormRequiredInput
                                 id={'rs-description'}
                                 type={'text'}
                                 name={'description'}
                                 value={this.props?.description}
                                 placeholder={'Назва*'}
+                                isErrorPresent={this.state.validationErrors.includes(errorLabels.descriptionIsRequired)}
                             />
                         </FormContainer>
                         <FormContainer direction={'row'}>
-                            <FormSubmitButton type={'submit'}>Ок</FormSubmitButton>
+                            <FormSubmitButton
+                                type={'submit'}
+                                disabled={!this.props.position}
+                            >
+                                Ок
+                            </FormSubmitButton>
                         </FormContainer>
                         <FormContainer direction={'row'}>
                             <ErrorsCard errors={this.state.validationErrors} disableBackgroundColor={true}/>

@@ -5,7 +5,7 @@ import {SectionItem} from "../../styles/page.styled";
 import {
     Form,
     FormContainer,
-    FormInput,
+    FormInput, FormRequiredInput,
     FormSubmitButton,
     FormTextArea,
     FormWrapper
@@ -13,6 +13,16 @@ import {
 import {Position} from "../map/Utils";
 import {ErrorsCard} from "../validation/ErrorsCard";
 import {WarningsCard} from "../validation/WarningsCard";
+
+const errorLabels = {
+    nameIsRequired: 'Вкажіть ім\'я клієнта.',
+    addressLinesIsRequired: 'Оберіть адресу клієнта на мапі.',
+}
+
+const warningLabels = {
+    phoneNumberIsMissed: 'Ви не вказали номер телефону клієнта. Встановлено значення за замовчуванням.',
+    specialRequirementsIsMissed: 'Ви не вказали особливі вимоги клієнта. Встановлено значення за замовчуванням.'
+}
 
 export interface CustomerFormProps extends DynamicFormProps<CustomerBean> {
     position?: Position
@@ -63,13 +73,13 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
         const warningStrings = []
         e.preventDefault()
         if (e.target.name.value === '')
-            errorStrings.push('Вкажіть ім\'я клієнта.')
+            errorStrings.push(errorLabels.nameIsRequired)
         if (e.target.phoneNumber.value === '')
-            warningStrings.push('Ви не вказали номер телефону клієнта. Встановлено значення за замовчуванням.')
+            warningStrings.push(warningLabels.phoneNumberIsMissed)
         if (!this.props.position?.addressLines)
-            errorStrings.push('Оберіть адресу клієнта на мапі.')
+            errorStrings.push(errorLabels.addressLinesIsRequired)
         if (e.target.specialRequirements.value === '')
-            warningStrings.push('Ви не вказали особливі вимоги клієнта. Встановлено значення за замовчуванням.')
+            warningStrings.push(warningLabels.specialRequirementsIsMissed)
         this.setState({
             validationErrors: errorStrings,
             validationWarnings: warningStrings
@@ -87,11 +97,12 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                 <FormWrapper>
                     <Form onSubmit={this.handleSubmit} onChange={this.props.onChangeHandler}>
                         <FormContainer direction={'column'}>
-                            <FormInput
+                            <FormRequiredInput
                                 id={'c-name'}
                                 type={'text'}
                                 name={'name'}
                                 placeholder={'Ім\'я*'}
+                                isErrorPresent={this.state.validationErrors.includes(errorLabels.nameIsRequired)}
                             />
                             <FormInput
                                 id={'c-phone-number'}
@@ -99,12 +110,13 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                                 name={'phoneNumber'}
                                 placeholder={'Номер Телефону'}
                             />
-                            <FormInput
+                            <FormRequiredInput
                                 id={'c-address-lines'}
                                 type={'text'}
                                 name={'addressLines'}
                                 value={this.getAddressLines()}
                                 placeholder={'Адреса*'}
+                                isErrorPresent={this.state.validationErrors.includes(errorLabels.addressLinesIsRequired)}
                             />
                             <FormTextArea
                                 id={'c-special-requirements'}

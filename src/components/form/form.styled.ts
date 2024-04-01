@@ -38,7 +38,10 @@ export const FormHeader = styled.div`
 
 
 export const FormInput = styled(Input)`
-  
+`
+
+export const FormRequiredInput = styled(FormInput)<{isErrorPresent: boolean}>`
+    border-color: ${(props) => props.isErrorPresent ? ColorScheme.RED_ACTIVE : 'inherit'};
 `
 
 export const FormTextArea = styled(TextArea)`

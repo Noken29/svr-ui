@@ -7,6 +7,7 @@ import {Depot} from "../../domain/Depot";
 import {CustomerMarker, DepotMarker, SelectedPositionMarker} from "./Marker";
 import {KyivPosition, Position} from "./Utils";
 import {GoogleMap} from "@react-google-maps/api";
+import {ColorScheme} from "../../styles/global";
 
 interface RoutingMapProps {
     depot?: Depot
@@ -44,10 +45,12 @@ export const RoutingMap = (props: RoutingMapProps) => {
         <GoogleMap
             mapContainerStyle={{
                 height: '100%',
-                width: '100%'
+                boxSizing: 'border-box',
+                borderRadius: '10px',
+                border: '3px solid' + ColorScheme.LIGHTCYAN,
             }}
             zoom={10}
-            center={KyivPosition}
+            center={props.depot?.asPosition() ?? KyivPosition}
             onClick={handleMapClick}
             onLoad={loadMarkers}
         >

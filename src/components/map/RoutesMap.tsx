@@ -5,6 +5,7 @@ import {Solution} from "../../domain/Solution";
 import {DirectionsRenderer, DirectionsService, GoogleMap} from "@react-google-maps/api";
 import {Customer} from "../../domain/Customer";
 import {Depot} from "../../domain/Depot";
+import {ColorScheme} from "../../styles/global";
 
 interface RoutesMapProps {
     display: boolean
@@ -23,12 +24,14 @@ export const RoutesMap = (props: RoutesMapProps) => {
         return (
             <GoogleMap
                 mapContainerStyle={{
-                    height: '500px',
-                    width: '100%',
-                    display: (props.display ? 'block' : 'none')
+                    height: '650px',
+                    display: (props.display ? 'block' : 'none'),
+                    boxSizing: 'border-box',
+                    borderRadius: '10px',
+                    border: '3px solid' + ColorScheme.LIGHTCYAN,
                 }}
                 zoom={10}
-                center={KyivPosition}
+                center={props.solution.depot.asPosition()}
                 onLoad={loadRoutes}
             >
                 {displayRoutes && props.solution.depot && <DepotMarker depot={props.solution.depot}/>}
@@ -46,12 +49,14 @@ export const RoutesMap = (props: RoutesMapProps) => {
     return (
         <GoogleMap
             mapContainerStyle={{
-                height: '500px',
-                width: '100%',
-                display: (props.display ? 'block' : 'none')
+                height: '650px',
+                display: (props.display ? 'block' : 'none'),
+                boxSizing: 'border-box',
+                borderRadius: '10px',
+                border: '3px solid' + ColorScheme.LIGHTCYAN,
             }}
             zoom={10}
-            center={KyivPosition}
+            center={props.solution.depot.asPosition()}
             onLoad={loadRoutes}
         >
             {displayRoutes && props.solution.depot && <DepotMarker depot={props.solution.depot}/>}
