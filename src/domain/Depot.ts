@@ -1,4 +1,4 @@
-import {Position} from "../components/map/Utils";
+import {Position} from "google-map-react";
 
 export type DepotBean = {
     id?: number,

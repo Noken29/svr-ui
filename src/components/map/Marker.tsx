@@ -2,7 +2,7 @@ import React from "react";
 import {ColorScheme} from "../../styles/global";
 import {Depot} from "../../domain/Depot";
 import {Customer} from "../../domain/Customer";
-import {Position} from "./Utils";
+import {Position} from "../../domain/Position";
 import {MarkerF} from "@react-google-maps/api";
 
 interface MarkerProps {

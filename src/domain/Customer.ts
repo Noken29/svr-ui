@@ -2,7 +2,7 @@ import {Package, PackageBean} from "./Package";
 import {ColumnDef} from "@tanstack/react-table";
 import {Tabulated} from "./Tabulated";
 import uuid from 'react-uuid';
-import {Position} from "../components/map/Utils";
+import {Position} from "google-map-react";
 
 export type CustomerBean = {
     id?: number

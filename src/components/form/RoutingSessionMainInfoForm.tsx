@@ -2,7 +2,7 @@ import React from "react";
 import {
     Form,
     FormContainer,
-    FormInput, FormRequiredInput,
+    FormRequiredInput,
     FormSubmitButton,
     FormWrapper
 } from "./form.styled";
@@ -10,7 +10,7 @@ import {SectionItem} from "../../styles/page.styled";
 import {Depot, DepotBean} from "../../domain/Depot";
 import DynamicForm, {DynamicFormProps, DynamicFormState} from "./DynamicForm";
 import {RoutingSessionMainInfoBean} from "../../domain/RoutingSession";
-import {Position} from "../map/Utils";
+import {Position} from "../../domain/Position";
 import {ErrorsCard} from "../validation/ErrorsCard";
 
 const errorLabels = {

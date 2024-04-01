@@ -5,7 +5,7 @@ import {Customer} from "../../domain/Customer";
 import {GOOGLE_MAPS_API_KEY} from "../../configuration/GoogleMapsAPIConfiguration";
 import {Depot} from "../../domain/Depot";
 import {CustomerMarker, DepotMarker, SelectedPositionMarker} from "./Marker";
-import {KyivPosition, Position} from "./Utils";
+import {KyivPosition, Position} from "../../domain/Position";
 import {GoogleMap} from "@react-google-maps/api";
 import {ColorScheme} from "../../styles/global";
 

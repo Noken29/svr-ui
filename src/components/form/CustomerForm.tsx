@@ -10,7 +10,7 @@ import {
     FormTextArea,
     FormWrapper
 } from "./form.styled";
-import {Position} from "../map/Utils";
+import {Position} from "../../domain/Position";
 import {ErrorsCard} from "../validation/ErrorsCard";
 import {WarningsCard} from "../validation/WarningsCard";
 
