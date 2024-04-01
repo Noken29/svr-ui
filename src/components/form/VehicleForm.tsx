@@ -2,7 +2,7 @@ import {DynamicForm, DynamicFormProps, DynamicFormState} from "./DynamicForm";
 import React from "react";
 import {VehicleBean} from "../../domain/Vehicle";
 import {FuelType} from "../../domain/FuelType";
-import {Form, FormContainer, FormHeader, FormInput, FormSubmitButton, FormWrapper} from "./form.styled";
+import {Form, FormContainer, FormInput, FormSubmitButton, FormWrapper} from "./form.styled";
 import {SectionItem} from "../../styles/page.styled";
 
 export interface VehicleFormProps extends DynamicFormProps<VehicleBean> {
@@ -14,7 +14,8 @@ export interface VehicleFormState extends DynamicFormState<VehicleBean> {}
 export class VehicleForm extends DynamicForm<VehicleFormProps, VehicleFormState, VehicleBean> {
 
     state: Readonly<VehicleFormState> = {
-        validationErrors: []
+        validationErrors: [],
+        validationWarnings: []
     }
 
     constructor(props: VehicleFormProps, context: any) {

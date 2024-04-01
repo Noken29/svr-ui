@@ -97,6 +97,35 @@ export const ContainerItem = styled.div<{justifyContent: string}>`
   justify-content: ${props => props.justifyContent};
 `
 
+export const TextCard = styled(SectionItem)`
+  gap: 10px;
+`
+
+export const TextCardItem = styled.div<{backgroundColor: string}>`
+  background-color: ${(props) => props.backgroundColor};
+  display: flex;
+  padding: 10px 15px;
+
+  font-family: ${Fonts.MAIN_FONT};
+  font-size: 12pt;
+
+  color: ${ColorScheme.DARKBLUE_ACTIVE};
+  border-radius: 10px;
+  border: 0;
+`
+
+export const TextCardItemIcon = styled.div<{backgroundColor: string}>`
+  background-color: ${(props => props.backgroundColor)};
+  padding: 10px;
+  margin-right: 10px;
+
+  border-radius: 100%;
+  border: 0;
+`
+
+export const Text = styled.div`
+`
+
 export const PageFooter = styled.footer`
   background-color: ${ColorScheme.DARKBLUE_ACTIVE};
   align-self: flex-end;

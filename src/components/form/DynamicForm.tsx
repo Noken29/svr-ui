@@ -6,6 +6,7 @@ export interface DynamicFormProps<T> {
 
 export interface DynamicFormState<T> {
     validationErrors: string[]
+    validationWarnings: string[]
 }
 
 export abstract class DynamicForm<P extends DynamicFormProps<T>, S extends DynamicFormState<T>, T> extends React.Component<P, S> {

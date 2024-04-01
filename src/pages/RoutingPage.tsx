@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Customer, CustomerBean, customerColumns} from "../domain/Customer";
 import {Package, PackageBean, packageColumns} from "../domain/Package";
 import {
@@ -22,6 +22,8 @@ import {Depot} from "../domain/Depot";
 import {Position} from "google-map-react";
 import {RoutingMap} from "../components/map/RoutingMap";
 import {formatDate} from "../utils/FormatUtils";
+import {ErrorsCard} from "../components/validation/ErrorsCard";
+import {WarningsCard} from "../components/validation/WarningsCard";
 
 interface RoutingPageProps {
     routingSession?: RoutingSession,
@@ -33,21 +35,10 @@ interface RoutingPageProps {
 
 const RoutingPage: React.FC<RoutingPageProps> = (props) => {
     const [saved, setSaved] = useState(true)
+    const [selectedPosition, setSelectedPosition] = useState<Position>()
 
     const [depot, setDepot] = useState(props.routingSession?.depot)
     const [description, setDescription] = useState(props.routingSession?.description)
-
-    const [customers, setCustomers] = useState<Customer[]>(props.routingSession?.customers ?? [])
-    const [vehicles, setVehicles] = useState<Vehicle[]>(props.vehicles)
-
-    const [selectedCustomer, setSelectedCustomer] = useState<Customer>()
-    const [packages, setPackages] = useState<Package[]>([])
-
-    const [selectedVehicles, setSelectedVehicles] = useState<Vehicle[]>(
-        props.routingSession ? props.vehicles.filter(v => v.id && props.routingSession?.vehicleIds.has(v.id)) : []
-    )
-
-    const [position, setPosition] = useState<Position>()
 
     const handleAddMainInfo = (r: RoutingSessionMainInfoBean) => {
         setDepot(new Depot(r.depot))
@@ -55,45 +46,83 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
         setSaved(false)
     }
 
-    const handleAddCustomer = (c: CustomerBean) => {
-        setCustomers((prevState) => [...prevState, new Customer(c)])
+    const [customers, setCustomers] = useState<Customer[]>(props.routingSession?.customers ?? [])
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer>()
+    const [customersPackages, setCustomersPackages] = useState<Map<string, Package[]>>(
+        () => {
+            const initialCustomersPackages = new Map()
+            customers.forEach(c => {
+                initialCustomersPackages.set(c.key(), c.packages)
+            })
+            return initialCustomersPackages
+        }
+    )
+
+
+    const handleAddCustomer = (bean: CustomerBean) => {
+        const newCustomer = new Customer(bean)
+        setCustomers((prevState) => [...prevState, newCustomer])
+
+        const newCustomersPackages = new Map(customersPackages)
+        newCustomersPackages.set(newCustomer.key(), [])
+        setCustomersPackages(newCustomersPackages)
+
         setSaved(false)
     }
 
-    const handleRemoveCustomer = (c: Customer) => {
+    const handleRemoveCustomer = (customer: Customer) => {
         setSelectedCustomer(undefined)
-        setCustomers(customers.filter(e => e !== c))
+        setCustomers(customers.filter(c => c !== customer))
+
+        const newCustomerPackages = new Map(customersPackages)
+        newCustomerPackages.delete(customer.key())
+        setCustomersPackages(newCustomerPackages)
+
         setSaved(false)
     }
 
-    const handleSelectCustomer = (c: Customer) => {
-        if (selectedCustomer !== c) {
-            setSelectedCustomer(c)
-            setPackages(c.packages)
-        } else {
-            setSelectedCustomer(undefined)
-            setPackages([])
-        }
+    const handleSelectCustomer = (customer: Customer) => {
+        setSelectedCustomer(selectedCustomer !== customer ? customer : undefined)
     }
-    const handleAddPackage = (p: PackageBean) => {
+    const handleAddPackage = (bean: PackageBean) => {
+        const newPackage = new Package(bean)
+
         if (selectedCustomer !== undefined) {
-            selectedCustomer.packages = [new Package(p), ...selectedCustomer.packages]
-            setPackages(selectedCustomer.packages)
-            setSaved(false)
+            const newCustomersPackages = new Map(customersPackages)
+            const selectedCustomerPackages = newCustomersPackages.get(selectedCustomer.key())
+            if (selectedCustomerPackages)
+                newCustomersPackages.set(selectedCustomer.key(), [newPackage, ...selectedCustomerPackages])
+            else
+                newCustomersPackages.set(selectedCustomer.key(), [newPackage])
+            setCustomersPackages(newCustomersPackages)
         }
+
+        setSaved(false)
     }
-    const handleRemovePackage = (p: Package) => {
-        if (selectedCustomer !== undefined) {
-            selectedCustomer.packages = selectedCustomer.packages.filter(e => e !== p)
-            setPackages(selectedCustomer.packages)
-            setSaved(false)
+    const handleRemovePackage = (pcg: Package) => {
+        if (selectedCustomer) {
+            const newCustomersPackages = new Map(customersPackages)
+            const selectedCustomerPackages = newCustomersPackages.get(selectedCustomer.key())
+            if (selectedCustomerPackages)
+                newCustomersPackages.set(selectedCustomer.key(), selectedCustomerPackages.filter(p => p !== pcg))
+            else
+                newCustomersPackages.set(selectedCustomer.key(), [])
+            setCustomersPackages(newCustomersPackages)
         }
+
+        setSaved(false)
     }
-    const handleSelectVehicle = (v: Vehicle) => {
-        if (selectedVehicles.indexOf(v) === -1)
-            setSelectedVehicles((prevState) => [...prevState, v])
+
+    const [selectedVehicles, setSelectedVehicles] = useState<Vehicle[]>(
+        props.routingSession ? props.vehicles.filter(v => v.id && props.routingSession?.vehicleIds.has(v.id)) : []
+    )
+
+    const handleSelectVehicle = (vehicle: Vehicle) => {
+        if (selectedVehicles.indexOf(vehicle) === -1)
+            setSelectedVehicles((prevState) => [...prevState, vehicle])
         else
-            setSelectedVehicles(selectedVehicles.filter(e => e !== v))
+            setSelectedVehicles(selectedVehicles.filter(v => v !== vehicle))
+
         setSaved(false)
     }
     const handleChangeCustomerForm = () => {
@@ -101,10 +130,15 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
     }
 
     const handleChangeCoordinates = (pos: Position) => {
-        setPosition(pos)
+        setSelectedPosition(pos)
     }
 
     const buildRoutingSessionBean = () => {
+        customers.forEach(c => {
+            const customerPackages = customersPackages.get(c.key())
+            if (customerPackages)
+                c.packages = customerPackages
+        })
         return {
             description: description,
             lastSaved: Date.now(),
@@ -113,6 +147,76 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
             vehicleIds: selectedVehicles.map((v) => v.id)
         } as RoutingSessionBean
     }
+
+    const [denySave, setDenySave] = useState<boolean>(false)
+    const [mainInfoValidationErrors, setMainInfoValidationErrors] = useState<string[]>([])
+    const [customersValidationErrors, setCustomersValidationErrors] = useState<string[]>([])
+    const [selectedVehiclesValidationErrors, setSelectedVehiclesValidationErrors] = useState<string[]>([])
+
+    const validateErrors = () => {
+        let errorStrings = []
+        let haveErrors = false
+        if (!depot) {
+            errorStrings.push('Необхідно обрати Депо.')
+        }
+        if (!description) {
+            errorStrings.push('Необхідно вказати назву сеансу маршрутизації.')
+        }
+        setMainInfoValidationErrors(errorStrings)
+        haveErrors = errorStrings.length !== 0
+        errorStrings = []
+
+        if (!customers.length) {
+            errorStrings.push('Необхідно додати хоча б одного клієнта.')
+        } else {
+            customers.forEach(c => {
+                const customerPackages = customersPackages.get(c.key())
+                if (!customerPackages || !customerPackages.length) {
+                    errorStrings.push(`Клієнт - ${c.name} не має вантажів.`)
+                }
+            })
+        }
+        setCustomersValidationErrors(errorStrings)
+        haveErrors = haveErrors || errorStrings.length !== 0
+        errorStrings = []
+
+        if (!selectedVehicles.length) {
+            errorStrings.push('Необхідно обрати хоча б один транспортний засіб.')
+        }
+        setSelectedVehiclesValidationErrors(errorStrings)
+        haveErrors = haveErrors || errorStrings.length !== 0
+        setDenySave(haveErrors)
+    }
+
+    const [selectedVehiclesValidationWarnings, setSelectedVehiclesValidationWarnings] = useState<string[]>([])
+
+    const checkWarnings = () => {
+        const warningStrings = []
+        if (selectedVehicles.length) {
+            let warningFound = false
+            for (let i = 0; i < selectedVehicles.length; i++) {
+                for (let j = 0; j < customers.length; j++) {
+                    const customerPackages = customersPackages.get(customers[j].key())
+                    if (customerPackages) {
+                        for (let k = 0; k < customerPackages.length; k++) {
+                            warningFound = selectedVehicles[i].volume < customerPackages[k].volume
+                                || selectedVehicles[i].carryingCapacity < customerPackages[k].weight
+                            if (warningFound) {
+                                warningStrings.push(`Клієнт - ${customers[j].name}, вантаж: (Тип: ${customerPackages[k].type}, Вага/Об'єм: ${customerPackages[k].weight}/${customerPackages[k].volume}) перевищує місткість ТЗ: ${selectedVehicles[i].description}.`)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        setSelectedVehiclesValidationWarnings(warningStrings)
+    }
+
+    useEffect(() => {
+        validateErrors()
+        checkWarnings()
+    }, [depot, description, customers, customersPackages, selectedVehicles]);
 
     return (
         <>
@@ -125,7 +229,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                         <ContainerItem justifyContent={'flex-start'}>
                             <ControlButton
                                 onClick={() => props.savingHandler(buildRoutingSessionBean()).then((value) => setSaved(value))}
-                                disabled={saved}
+                                disabled={saved || denySave}
                                 margin={'0 10px 0 0'}
                                 title={'Збережено: ' + (props.routingSession?.lastSaved.toString() ? formatDate(props.routingSession?.lastSaved.toString()) : 'Не збережено')}
                             >
@@ -155,8 +259,11 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                         <SectionHeader>Сеанс Маршрутизації</SectionHeader>
                         <RoutingSessionMainInfoForm
                             addingHandler={handleAddMainInfo}
-                            position={position}
+                            position={selectedPosition}
+                            depot={depot}
+                            description={description}
                         />
+                        {mainInfoValidationErrors.length !== 0 && <ErrorsCard errors={mainInfoValidationErrors} disableBackgroundColor={false}/>}
                     </SectionContainer>
                     <SectionContainer direction={'column'}>
                         <SectionItem>
@@ -164,7 +271,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                             <CustomerForm
                                 addingHandler={handleAddCustomer}
                                 onChangeHandler={handleChangeCustomerForm}
-                                position={position}
+                                position={selectedPosition}
                             />
                         </SectionItem>
                         <RoutingMap
@@ -191,6 +298,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                                 }}
                                 removingHandler={handleRemoveCustomer}
                             />
+                            {customersValidationErrors.length !== 0 && <ErrorsCard errors={customersValidationErrors} disableBackgroundColor={false}/>}
                         </SectionItem>
                     </SectionContainer>
                     {selectedCustomer !== undefined && (
@@ -209,7 +317,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                                 <SectionHeader>Клієнт - {selectedCustomer.name}: Вантажі</SectionHeader>
                                 <DataTable<Package>
                                     columns={packageColumns}
-                                    data={selectedCustomer?.packages}
+                                    data={customersPackages.get(selectedCustomer.key()) ?? []}
                                     searchInputPlaceholder={'Фільтр Тип/Вага/Об\'єм/...'}
                                     itemsPerTable={5}
                                     removingHandler={handleRemovePackage}
@@ -222,7 +330,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                             <SectionHeader>Транспортні Засоби</SectionHeader>
                             <DataTable<Vehicle>
                                 columns={vehicleColumns}
-                                data={vehicles}
+                                data={props.vehicles}
                                 selectedData={selectedVehicles}
                                 searchInputPlaceholder={'Фільтр Марка/Модель/...'}
                                 itemsPerTable={10}
@@ -232,6 +340,8 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                                     selectionHandler: handleSelectVehicle
                                 }}
                             />
+                            {selectedVehiclesValidationErrors.length !== 0 && <ErrorsCard errors={selectedVehiclesValidationErrors} disableBackgroundColor={false}/>}
+                            {selectedVehiclesValidationWarnings.length !== 0 && <WarningsCard warnings={selectedVehiclesValidationWarnings} disableBackgroundColor={false}/>}
                         </SectionItem>
                     </SectionContainer>
                 </MainContainerBody>

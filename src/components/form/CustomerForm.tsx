@@ -5,13 +5,14 @@ import {SectionItem} from "../../styles/page.styled";
 import {
     Form,
     FormContainer,
-    FormHeader,
     FormInput,
     FormSubmitButton,
     FormTextArea,
     FormWrapper
 } from "./form.styled";
 import {Position} from "../map/Utils";
+import {ErrorsCard} from "../validation/ErrorsCard";
+import {WarningsCard} from "../validation/WarningsCard";
 
 export interface CustomerFormProps extends DynamicFormProps<CustomerBean> {
     position?: Position
@@ -24,31 +25,56 @@ export interface CustomerFormState extends DynamicFormState<CustomerBean> {
 export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormState, CustomerBean> {
 
     state: Readonly<CustomerFormState> = {
-        validationErrors: []
+        validationErrors: [],
+        validationWarnings: []
     }
 
     constructor(props: CustomerFormProps, context: any) {
         super(props, context);
         this.handleSubmit = this.handleSubmit.bind(this)
+        this.validateErrors = this.validateErrors.bind(this)
     }
 
     handleSubmit(e: any) {
         e.preventDefault()
-        if (!this.props.position) {
-            alert('Select position first!')
+        if (!this.validateErrors(e)) {
             return
         }
-        this.props.addingHandler(
-            {
-                name: e.target.name.value,
-                phoneNumber: e.target.phoneNumber.value,
-                addressLines: e.target.addressLines.value,
-                specialRequirements: e.target.specialRequirements.value,
-                packages: [],
-                latitude: this.props.position.lat,
-                longitude: this.props.position.lng,
-            } as CustomerBean
-        )
+        if (this.props.position) {
+            this.props.addingHandler(
+                {
+                    name: e.target.name.value,
+                    phoneNumber: e.target.phoneNumber.value !== '' ? e.target.phoneNumber.value : 'Не вказано',
+                    addressLines: e.target.addressLines.value,
+                    specialRequirements: e.target.specialRequirements.value !== '' ? e.target.specialRequirements.value : 'Не вказано',
+                    packages: [],
+                    latitude: this.props.position.lat,
+                    longitude: this.props.position.lng,
+                } as CustomerBean
+            )
+            this.setState({
+                validationErrors: []
+            })
+        }
+    }
+
+    validateErrors(e: any) {
+        const errorStrings = []
+        const warningStrings = []
+        e.preventDefault()
+        if (e.target.name.value === '')
+            errorStrings.push('Вкажіть ім\'я клієнта.')
+        if (e.target.phoneNumber.value === '')
+            warningStrings.push('Ви не вказали номер телефону клієнта. Встановлено значення за замовчуванням.')
+        if (!this.props.position?.addressLines)
+            errorStrings.push('Оберіть адресу клієнта на мапі.')
+        if (e.target.specialRequirements.value === '')
+            warningStrings.push('Ви не вказали особливі вимоги клієнта. Встановлено значення за замовчуванням.')
+        this.setState({
+            validationErrors: errorStrings,
+            validationWarnings: warningStrings
+        })
+        return !errorStrings.length
     }
 
     getAddressLines() {
@@ -65,7 +91,7 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                                 id={'c-name'}
                                 type={'text'}
                                 name={'name'}
-                                placeholder={'Ім\'я'}
+                                placeholder={'Ім\'я*'}
                             />
                             <FormInput
                                 id={'c-phone-number'}
@@ -78,7 +104,7 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                                 type={'text'}
                                 name={'addressLines'}
                                 value={this.getAddressLines()}
-                                placeholder={'Адреса'}
+                                placeholder={'Адреса*'}
                             />
                             <FormTextArea
                                 id={'c-special-requirements'}
@@ -86,6 +112,10 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                                 placeholder={'Вимоги'}
                             />
                             <FormSubmitButton type={'submit'}>Додати</FormSubmitButton>
+                        </FormContainer>
+                        <FormContainer direction={'column'}>
+                            <ErrorsCard errors={this.state.validationErrors} disableBackgroundColor={true}/>
+                            {this.state.validationErrors.length === 0 && <WarningsCard warnings={this.state.validationWarnings} disableBackgroundColor={true}/>}
                         </FormContainer>
                     </Form>
                 </FormWrapper>

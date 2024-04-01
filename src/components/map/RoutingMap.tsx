@@ -30,7 +30,6 @@ export const RoutingMap = (props: RoutingMapProps) => {
         }).then(
             response => {
                 pos.addressLines = response.results[0].formatted_address
-                console.log(pos.addressLines)
             }
         );
         setSelectedPosition(pos)
