@@ -1,4 +1,4 @@
-import {FuelType} from "./FuelType";
+import {FuelType, fuelTypeFields} from "./FuelType";
 import {ColumnDef} from "@tanstack/react-table";
 import {Tabulated} from "./Tabulated";
 import uuid from 'react-uuid';
@@ -47,26 +47,33 @@ export class Vehicle implements Tabulated {
     }
 }
 
+export const vehicleFields = {
+    description: 'Марка/Модель',
+    carryingCapacity: 'Вантажопідйомність(кг)',
+    volume: 'Об’єм багажника/Причепа(м³)',
+    fuelConsumption: 'Споживання пального(л/100км)'
+}
+
 export const vehicleColumns: ColumnDef<Vehicle>[] = [
     {
         accessorKey: 'description',
-        header: 'Марка/Модель',
+        header: vehicleFields.description,
     },
     {
         accessorKey: 'carryingCapacity',
-        header: 'Вантажопідйомність',
+        header: vehicleFields.carryingCapacity,
     },
     {
         accessorKey: 'volume',
-        header: 'Об\'єм Кузова',
+        header: vehicleFields.volume,
     },
     {
         accessorKey: 'fuelType',
-        header: 'Тип Пального',
+        header: fuelTypeFields.description,
         cell: ({ row }) => row.original.fuelType.description
     },
     {
         accessorKey: 'fuelConsumption',
-        header: 'Споживання Пального',
+        header: vehicleFields.fuelConsumption,
     }
 ]

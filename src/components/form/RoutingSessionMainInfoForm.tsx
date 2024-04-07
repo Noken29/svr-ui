@@ -101,7 +101,7 @@ export class RoutingSessionMainInfoForm extends DynamicForm<RoutingSessionMainIn
                             isErrorPresent={this.state.validationErrors.includes(errorLabels.descriptionIsRequired)}
                         />
                     </FormContainer>
-                    <FormContainer direction={'row'}>
+                    <FormContainer direction={'column'}>
                         <FormSubmitButton type={'submit'} disabled={!this.props.position}>Ок</FormSubmitButton>
                         <ErrorsCard errors={this.state.validationErrors} disableBackgroundColor={true}/>
                     </FormContainer>

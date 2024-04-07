@@ -1,6 +1,6 @@
 import {DynamicForm, DynamicFormProps, DynamicFormState} from "./DynamicForm";
 import React from "react";
-import {VehicleBean} from "../../domain/Vehicle";
+import {VehicleBean, vehicleFields} from "../../domain/Vehicle";
 import {FuelType} from "../../domain/FuelType";
 import {Form, FormContainer, FormInput, FormSubmitButton, FormWrapper} from "./form.styled";
 import {SectionItem} from "../../styles/page.styled";
@@ -26,7 +26,6 @@ export class VehicleForm extends DynamicForm<VehicleFormProps, VehicleFormState,
     handleSubmit(e: any) {
         e.preventDefault();
         if (!this.props.selectedFuelType) {
-            alert('Select Fuel Type first!')
             return
         }
         this.props.addingHandler(
@@ -49,23 +48,23 @@ export class VehicleForm extends DynamicForm<VehicleFormProps, VehicleFormState,
                                 type={'text'}
                                 id={'description'}
                                 name={'description'}
-                                placeholder={'Марка/Модель'}
+                                placeholder={vehicleFields.description + '*'}
                             />
                         <FormContainer direction={'row'}>
                             <FormInput
                                 type={'number'}
                                 name={'carryingCapacity'}
-                                placeholder={'Вантажопідйомність'}
+                                placeholder={vehicleFields.carryingCapacity + '*'}
                             />
                             <FormInput
                                 type={'number'}
                                 name={'volume'}
-                                placeholder={'Об’єм кузова'}
+                                placeholder={vehicleFields.volume + '*'}
                             />
                             <FormInput
                                 type={'number'}
                                 name={'fuelConsumption'}
-                                placeholder={'Споживання пального'}
+                                placeholder={vehicleFields.fuelConsumption + '*'}
                             />
                         </FormContainer>
                         <FormContainer direction={'column'}>

@@ -48,11 +48,11 @@ export const packageColumns: ColumnDef<Package>[] = [
     },
     {
         accessorKey: 'weight',
-        header: 'Вага/Об\'єм',
+        header: 'Вага(кг)/Об\'єм(л)',
         cell: ({ row }) => row.original.weight + '/' + row.original.volume
     },
     {
         accessorKey: 'cost',
-        header: 'Вартість Доставки',
+        header: 'Вартість Доставки(грн)',
     },
 ]

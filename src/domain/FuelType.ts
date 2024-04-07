@@ -27,17 +27,23 @@ export class FuelType implements Tabulated {
 
 }
 
+export const fuelTypeFields = {
+    id: 'Номер',
+    description: 'Вид Пального',
+    cost: 'Вартість(грн/л)'
+}
+
 export const fuelTypeColumns: ColumnDef<FuelType>[] = [
     {
         accessorKey: 'id',
-        header: 'Номер',
+        header: fuelTypeFields.id,
     },
     {
         accessorKey: 'description',
-        header: 'Тип',
+        header: fuelTypeFields.description,
     },
     {
         accessorKey: 'cost',
-        header: 'Вартість',
+        header: fuelTypeFields.cost,
     },
 ]

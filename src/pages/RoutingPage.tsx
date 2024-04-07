@@ -58,7 +58,6 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
         }
     )
 
-
     const handleAddCustomer = (bean: CustomerBean) => {
         const newCustomer = new Customer(bean)
         setCustomers((prevState) => [...prevState, newCustomer])
@@ -134,6 +133,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
     }
 
     const buildRoutingSessionBean = () => {
+        console.log(customers.map(c => c.name))
         customers.forEach(c => {
             const customerPackages = customersPackages.get(c.key())
             if (customerPackages)
@@ -143,7 +143,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
             description: description,
             lastSaved: Date.now(),
             depot: depot?.asBean(),
-            customers: customers.map((c) => c.asBean()),
+            customers: customers.map((c, index) => c.asBean()),
             vehicleIds: selectedVehicles.map((v) => v.id)
         } as RoutingSessionBean
     }

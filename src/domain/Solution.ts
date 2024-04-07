@@ -73,6 +73,7 @@ export const solutionColumns: ColumnDef<Solution>[] = [
     {
         accessorKey: 'numRoutes',
         header: 'Кількість маршрутів',
+        cell: ({ row }) => row.original.routes.length
     },
     {
         accessorKey: 'totalLength',

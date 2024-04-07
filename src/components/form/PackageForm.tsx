@@ -85,7 +85,7 @@ export class PackageForm extends DynamicForm<PackageFormProps, PackageFormState,
                                 type={'number'}
                                 step="0.001"
                                 name={'weight'}
-                                placeholder={'Вага*'}
+                                placeholder={'Вага(кг)*'}
                                 isErrorPresent={this.state.validationErrors.includes(errorLabels.weightIsRequired)}
                             />
                         </FormContainer>
@@ -95,7 +95,7 @@ export class PackageForm extends DynamicForm<PackageFormProps, PackageFormState,
                                 type={'number'}
                                 step="0.001"
                                 name={'volume'}
-                                placeholder={'Об\'єм*'}
+                                placeholder={'Об\'єм(л)*'}
                                 isErrorPresent={this.state.validationErrors.includes(errorLabels.volumeIsRequired)}
                             />
                             <FormRequiredInput
