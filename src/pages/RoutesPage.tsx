@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {ClientConfiguration} from "../configuration/APIConfiguration";
 import {
+    ConditionalSectionItem,
     ContainerItem,
     MainContainer,
     MainContainerBody,
@@ -96,7 +97,7 @@ export const RoutesPage: React.FC<RoutesPageProps> = (props) => {
                         </SectionItem>
                         {props.solutions.map(s => {
                             return (
-                                <SectionItem>
+                                <ConditionalSectionItem display={s === selectedSolution}>
                                     {s === selectedSolution && <SectionHeader>Розв'язок №{selectedSolution?.id}: Маршрути</SectionHeader>}
                                     <RoutesMap
                                         key={s.key()}
@@ -127,7 +128,7 @@ export const RoutesPage: React.FC<RoutesPageProps> = (props) => {
                                             solution={s}
                                         />
                                     })}
-                                </SectionItem>
+                                </ConditionalSectionItem>
                             )
                         })}
                     </SectionContainer>
