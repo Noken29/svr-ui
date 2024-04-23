@@ -83,6 +83,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
     const handleSelectCustomer = (customer: Customer) => {
         setSelectedCustomer(selectedCustomer !== customer ? customer : undefined)
     }
+
     const handleAddPackage = (bean: PackageBean) => {
         const newPackage = new Package(bean)
 
@@ -128,8 +129,13 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
         setSelectedCustomer(undefined)
     }
 
-    const handleChangeCoordinates = (pos: Position) => {
+    const [isGeocodingFailed, setIsGeocodingFailed] = useState(false)
+
+    const handleChangeCoordinates = (pos: Position, isGeocodingFailed: boolean) => {
         setSelectedPosition(pos)
+        setIsGeocodingFailed(isGeocodingFailed)
+        if (isGeocodingFailed)
+            setTimeout(() => setIsGeocodingFailed(false), 5000)
     }
 
     const buildRoutingSessionBean = () => {
@@ -267,6 +273,10 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                                 processCoordinatesHandler={handleChangeCoordinates}
                                 selectionHandler={handleSelectCustomer}
                             />
+                            {isGeocodingFailed && <WarningsCard
+                                warnings={['Не вдалося визначити адресу. Спробуйте ще раз, або буде встановлено значення за замовчуванням.']}
+                                disableBackgroundColor={false}
+                            />}
                             <CustomerForm
                                 addingHandler={handleAddCustomer}
                                 onChangeHandler={handleChangeCustomerForm}
@@ -321,7 +331,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                                 data={props.vehicles}
                                 selectedData={selectedVehicles}
                                 searchInputPlaceholder={'Фільтр Марка/Модель/...'}
-                                itemsPerTable={10}
+                                itemsPerTable={9}
                                 selectionProps={{
                                     multipleSelection: true,
                                     canUnSelect: true,

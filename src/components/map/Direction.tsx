@@ -32,7 +32,7 @@ const SingleDirection: React.FC<SingleDirectionProps> = (props) => {
                         directions: directionsResult.directions,
                         suppressMarkers: true,
                         polylineOptions: {
-                            strokeColor: getRouteColorSchemeBasedOnIndex(props.routeIndex).textAndFillColor
+                            strokeColor: getRouteColorSchemeBasedOnIndex(props.routeIndex).fillColor
                         }
                     }}
                 />
@@ -64,7 +64,7 @@ export const RouteDirection: React.FC<RouteDirectionProps> = (props) => {
         <>
             {props.displayCustomers && props.customers.map((c, index) => {
                 if (c.latitude && c.longitude)
-                    return <CustomerMarker customer={c} routeIndex={props.routeIndex} textOverride={`#${index+1}: ${c.name}`}/>
+                    return <CustomerMarker customer={c} routeIndex={props.routeIndex} textOverride={`Клієнт №${index+1} - ${c.name}`}/>
             })}
             <SingleDirection routeIndex={props.routeIndex} from={props.depot.asPosition()} to={props.customers[0].asPosition()}/>
             {props.customers.map((c, index) => {

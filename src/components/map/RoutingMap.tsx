@@ -13,7 +13,7 @@ interface RoutingMapProps {
     depot?: Depot
     customers: Customer[]
     selectedCustomer?: Customer
-    processCoordinatesHandler: (pos: Position) => void
+    processCoordinatesHandler: (pos: Position, isGeocodingFailed: boolean) => void
     selectionHandler: (c: Customer) => void
 }
 
@@ -23,18 +23,23 @@ export const RoutingMap = (props: RoutingMapProps) => {
 
     const handleMapClick = async (e: any) => {
         let pos: Position = {lat: e.latLng.lat(), lng: e.latLng.lng(), addressLines: ''}
+        let geocodingFailed = false
         await geocode(RequestType.LATLNG, pos.lat.toString() + ',' + pos.lng.toString(), {
             key: GOOGLE_MAPS_API_KEY,
             outputFormat: OutputFormat.JSON,
             language: 'uk',
             location_type: 'ROOFTOP'
         }).then(
-            response => {
-                pos.addressLines = response.results[0].formatted_address
+            response => pos.addressLines = response.results[0].formatted_address
+        ).catch(
+            error => {
+                geocodingFailed = true
+                pos.addressLines = 'Не вказано'
             }
+        ).finally(
+            () => props.processCoordinatesHandler(pos, geocodingFailed)
         );
         setSelectedPosition(pos)
-        props.processCoordinatesHandler(pos)
     }
 
     const loadMarkers = () => {

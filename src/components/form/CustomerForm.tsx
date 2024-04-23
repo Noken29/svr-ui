@@ -16,7 +16,7 @@ import {WarningsCard} from "../validation/WarningsCard";
 
 const errorLabels = {
     nameIsRequired: 'Вкажіть ім\'я клієнта.',
-    addressLinesIsRequired: 'Оберіть адресу клієнта на мапі.',
+    addressLinesIsRequired: 'Оберіть місцезнаходження клієнта на мапі.',
 }
 
 const warningLabels = {
@@ -55,7 +55,7 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                 {
                     name: e.target.name.value,
                     phoneNumber: e.target.phoneNumber.value !== '' ? e.target.phoneNumber.value : 'Не вказано',
-                    addressLines: e.target.addressLines.value,
+                    addressLines: e.target.addressLines.value !== '' ? e.target.addressLines.value : 'Не вказано',
                     specialRequirements: e.target.specialRequirements.value !== '' ? e.target.specialRequirements.value : 'Не вказано',
                     packages: [],
                     latitude: this.props.position.lat,
@@ -77,7 +77,7 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
             errorStrings.push(errorLabels.nameIsRequired)
         if (e.target.phoneNumber.value === '')
             warningStrings.push(warningLabels.phoneNumberIsMissed)
-        if (!this.props.position?.addressLines)
+        if (!this.props.position)
             errorStrings.push(errorLabels.addressLinesIsRequired)
         if (e.target.specialRequirements.value === '')
             warningStrings.push(warningLabels.specialRequirementsIsMissed)
@@ -117,7 +117,7 @@ export class CustomerForm extends DynamicForm<CustomerFormProps, CustomerFormSta
                                 id={'c-address-lines'}
                                 type={'text'}
                                 name={'addressLines'}
-                                value={this.getAddressLines()}
+                                defaultValue={this.getAddressLines()}
                                 placeholder={'Адреса*'}
                                 isErrorPresent={this.state.validationErrors.includes(errorLabels.addressLinesIsRequired)}
                             />

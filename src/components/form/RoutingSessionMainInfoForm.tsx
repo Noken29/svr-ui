@@ -14,7 +14,7 @@ import {Position} from "../../domain/Position";
 import {ErrorsCard} from "../validation/ErrorsCard";
 
 const errorLabels = {
-    addressLinesIsRequired: 'Оберіть адресу депо на мапі.',
+    addressLinesIsRequired: 'Оберіть місцезнаходження депо на мапі.',
     descriptionIsRequired: 'Вкажіть назву сеансу маршрутизації.'
 }
 
@@ -62,7 +62,7 @@ export class RoutingSessionMainInfoForm extends DynamicForm<RoutingSessionMainIn
     validateErrors(e: any) {
         const errorsStrings = []
         e.preventDefault()
-        if (!this.props.position?.addressLines)
+        if (!this.props.position)
             errorsStrings.push(errorLabels.addressLinesIsRequired)
         if (e.target.description.value === '')
             errorsStrings.push(errorLabels.descriptionIsRequired)
@@ -87,22 +87,21 @@ export class RoutingSessionMainInfoForm extends DynamicForm<RoutingSessionMainIn
                             id={'d-address-lines'}
                             type={'text'}
                             name={'addressLines'}
-                            value={this.getAddressLines()}
+                            defaultValue={this.getAddressLines()}
                             placeholder={'Адреса Депо*'}
                             isErrorPresent={this.state.validationErrors.includes(errorLabels.addressLinesIsRequired)}
-                            disabled={true}
                         />
                         <FormRequiredInput
                             id={'rs-description'}
                             type={'text'}
                             name={'description'}
-                            value={this.props?.description}
+                            defaultValue={this.props?.description}
                             placeholder={'Назва*'}
                             isErrorPresent={this.state.validationErrors.includes(errorLabels.descriptionIsRequired)}
                         />
                     </FormContainer>
                     <FormContainer direction={'column'}>
-                        <FormSubmitButton type={'submit'} disabled={!this.props.position}>Ок</FormSubmitButton>
+                        <FormSubmitButton type={'submit'}>Ок</FormSubmitButton>
                         <ErrorsCard errors={this.state.validationErrors} disableBackgroundColor={true}/>
                     </FormContainer>
                 </Form>
