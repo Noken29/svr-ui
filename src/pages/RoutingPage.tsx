@@ -205,7 +205,7 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                     const customerPackages = customersPackages.get(customers[j].key())
                     if (customerPackages) {
                         for (let k = 0; k < customerPackages.length; k++) {
-                            warningFound = selectedVehicles[i].volume < customerPackages[k].volume
+                            warningFound = selectedVehicles[i].volume < customerPackages[k].volume / 1000
                                 || selectedVehicles[i].carryingCapacity < customerPackages[k].weight
                             if (warningFound) {
                                 warningStrings.push(`Клієнт - ${customers[j].name}, вантаж: (Тип: ${customerPackages[k].type}, Вага/Об'єм: ${customerPackages[k].weight}/${customerPackages[k].volume}) перевищує місткість ТЗ: ${selectedVehicles[i].description}.`)
