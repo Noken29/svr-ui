@@ -24,12 +24,14 @@ import {RoutingMap} from "../components/map/RoutingMap";
 import {formatDate} from "../utils/FormatUtils";
 import {ErrorsCard} from "../components/validation/ErrorsCard";
 import {WarningsCard} from "../components/validation/WarningsCard";
+import {ErrorBadge} from "../components/validation/ErrorBadge";
 
 interface RoutingPageProps {
     routingSession?: RoutingSession,
     vehicles: Vehicle[]
     savingHandler: (rs: RoutingSessionBean) => Promise<boolean>
     haveSolutions: boolean
+    errors: string[]
     makeRoutesHandler: () => void
 }
 
@@ -251,6 +253,11 @@ const RoutingPage: React.FC<RoutingPageProps> = (props) => {
                     </ToolbarContainer>
                 </MainContainerHeader>
                 <MainContainerBody>
+                    {props.errors.length !== 0 &&
+                        <SectionContainer direction={'row'}>
+                            {props.errors.map(e => <ErrorBadge error={e}/>)}
+                        </SectionContainer>
+                    }
                     <SectionContainer direction={'row'}>
                         <SectionItem>
                             <SectionHeader>Сеанс Маршрутизації</SectionHeader>

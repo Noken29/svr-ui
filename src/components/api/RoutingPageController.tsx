@@ -12,6 +12,10 @@ import {
 import RoutingPage from "../../pages/RoutingPage";
 import {Navigate, useParams} from "react-router-dom";
 
+const errorLabels = {
+    routingFailed: 'Не вдалось виконати маршрутизацію.'
+}
+
 interface RoutingPageControllerProps {
     routingSessionId?: number
 }
@@ -21,7 +25,8 @@ interface RoutingPageControllerState {
     vehicles: Vehicle[],
     isLoaded: boolean,
     initialSave: boolean,
-    haveSolutions: boolean
+    haveSolutions: boolean,
+    errors: string[]
 }
 
 class RoutingPageController extends React.Component<RoutingPageControllerProps, RoutingPageControllerState> {
@@ -30,7 +35,8 @@ class RoutingPageController extends React.Component<RoutingPageControllerProps, 
         vehicles: [],
         isLoaded: false,
         initialSave: !this.props.routingSessionId,
-        haveSolutions: false
+        haveSolutions: false,
+        errors: []
     }
 
     constructor(props: any, context: any) {
@@ -48,10 +54,28 @@ class RoutingPageController extends React.Component<RoutingPageControllerProps, 
     }
 
     async handleMakeRoutes() {
-        const response = await axios.get(APIPath + APIConfiguration.makeRoutes.path(this.props.routingSessionId))
-        this.setState({
-            haveSolutions: this.state.haveSolutions || response.data
-        })
+        await axios.get(APIPath + APIConfiguration.makeRoutes.path(this.props.routingSessionId))
+            .then(response => {
+                this.setState({
+                    haveSolutions: this.state.haveSolutions || response.data
+                })
+            })
+            .catch(error => {
+                this.setState({
+                    errors: [errorLabels.routingFailed]
+                })
+                console.log(error.response.data)
+                this.clearError(errorLabels.routingFailed, 2500)
+            })
+    }
+
+    clearError(label: string, after: number) {
+        setTimeout(() => {
+            let newErrors = this.state.errors.filter(e => e !== label)
+            this.setState({
+                errors: newErrors
+            })
+        }, after)
     }
 
     async componentDidMount() {
@@ -83,6 +107,7 @@ class RoutingPageController extends React.Component<RoutingPageControllerProps, 
             routingSession={this.state.routingSession}
             savingHandler={this.handleSave}
             haveSolutions={this.state.haveSolutions}
+            errors={this.state.errors}
             makeRoutesHandler={this.handleMakeRoutes}
         />
     }
